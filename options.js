@@ -202,6 +202,11 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('acfh-extension-blocker')?.remove();
         document.documentElement.classList.remove('acfh-extension-missing');
     }
+    function getI18nText(text) {
+        return window.ACFH_I18N && typeof window.ACFH_I18N.t === 'function'
+            ? window.ACFH_I18N.t(text, currentUiLanguage)
+            : text;
+    }
     // Exibe um aviso visual simples quando a extensão não é detectada
     function showExtensionWarningBanner() {
         if (document.getElementById('acfh-extension-warning')) return;
@@ -247,25 +252,30 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showExtensionFooterNotice() {
-        if (document.getElementById('acfh-extension-footer-notice')) return;
+        const existing = document.getElementById('acfh-extension-footer-notice');
+        if (existing) existing.remove();
         const notice = document.createElement('div');
         notice.id = 'acfh-extension-footer-notice';
-        notice.innerHTML = `<strong>The extension is not installed.</strong> <a href="${EXTENSION_INSTALL_URL}" target="_blank" rel="noopener noreferrer">Install</a>`;
-        notice.style.position = 'fixed';
-        notice.style.left = '0';
-        notice.style.right = '0';
-        notice.style.top = '58px';
-        notice.style.zIndex = '100002';
-        notice.style.padding = '11px 18px';
-        notice.style.background = 'linear-gradient(90deg, #991b1b, #dc2626)';
-        notice.style.borderBottom = '1px solid rgba(254, 202, 202, 0.35)';
-        notice.style.color = '#fff';
-        notice.style.fontFamily = 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-        notice.style.fontSize = '14px';
-        notice.style.textAlign = 'center';
-        notice.style.boxShadow = '0 12px 30px rgba(127, 29, 29, 0.36)';
-        notice.style.animation = 'acfhMissingSlide 420ms ease-out both';
+        notice.className = 'acfh-top-feedback acfh-top-feedback-error show';
+        notice.innerHTML = `<strong>${getI18nText('The extension is not installed.')}</strong> <a href="${EXTENSION_INSTALL_URL}" target="_blank" rel="noopener noreferrer">${getI18nText('Install')}</a>`;
         document.body.appendChild(notice);
+    }
+
+    function showExtensionDisabledNotice() {
+        if (!acfhExtensionConnected) return;
+        const existing = document.getElementById('acfh-extension-footer-notice');
+        if (existing) existing.remove();
+        const notice = document.createElement('div');
+        notice.id = 'acfh-extension-footer-notice';
+        notice.className = 'acfh-top-feedback acfh-top-feedback-error show';
+        notice.innerHTML = `<strong>${getI18nText('Extension disabled. Activate it to run automations.')}</strong>`;
+        document.body.appendChild(notice);
+    }
+
+    function clearExtensionDisabledNotice() {
+        if (!document.documentElement.classList.contains('acfh-extension-missing')) {
+            document.getElementById('acfh-extension-footer-notice')?.remove();
+        }
     }
 
     function hideProcessingOverlay() {
@@ -396,6 +406,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 pongReceived = true;
                 acfhExtensionConnected = true;
                 removeExtensionInstallNotices();
+                if (data.autoClickerEnabled === false) {
+                    showExtensionDisabledNotice();
+                }
                 window.removeEventListener('message', handlePong);
                 console.log('[ACFH] Extensão conectada à página de opções.');
                 startOptionsApp();
@@ -971,6 +984,46 @@ let isRenderingClickFillConfig = false;
             });
         });
 
+
+        const setTextBySelector = (selector, text) => {
+            const el = document.querySelector(selector);
+            if (el) el.textContent = tr(text, text);
+        };
+        setTextBySelector('[data-tm-menu="file"] .tm-menu-trigger', 'File');
+        setTextBySelector('[data-tm-menu="edit"] .tm-menu-trigger', 'Edit');
+        setTextBySelector('[data-tm-menu="selection"] .tm-menu-trigger', 'Selection');
+        setTextBySelector('[data-tm-menu="search"] .tm-menu-trigger', 'Find');
+        setTextBySelector('[data-tm-menu="goto"] .tm-menu-trigger', 'Go to');
+        setTextBySelector('[data-tm-menu="developer"] .tm-menu-trigger', 'Developer');
+        setTextBySelector('label[for="userScriptEditorEnabled"] span', 'Enable editor');
+        setTextBySelector('label[for="userScriptEditorTheme"]', 'Theme:');
+        setTextBySelector('label[for="userScriptEditorFontSize"]', 'Font size:');
+        setTextBySelector('label[for="userScriptEditorKeyMap"]', 'Keymap:');
+        setTextBySelector('label[for="userScriptEditorIndentUnit"]', 'Indent width:');
+        setTextBySelector('label[for="userScriptEditorTabSize"]', 'Tab size:');
+        setTextBySelector('label[for="userScriptEditorIndentWith"]', 'Indent with:');
+        setTextBySelector('label[for="userScriptEditorTabMode"]', 'Tabulation:');
+        setTextBySelector('label[for="userScriptEditorSelectionMatch"]', 'Selection match highlight:');
+        setTextBySelector('label[for="userScriptSandboxMode"]', 'Execution world:');
+        setTextBySelector('label[for="userScriptInjectionTiming"]', 'Activation policy:');
+        setTextBySelector('label[for="userScriptBlacklistSites"]', 'Blocked sites:');
+        setTextBySelector('.userscript-settings-section:nth-of-type(1) h4', 'Editor');
+        setTextBySelector('.userscript-settings-section:nth-of-type(2) h4', 'Execution');
+        setTextBySelector('.userscript-settings-section:nth-of-type(3) h4', 'Security');
+        [
+            ['#userScriptEditorIndentWith option[value="spaces"]', 'Spaces'],
+            ['#userScriptEditorIndentWith option[value="tabs"]', 'Tabs'],
+            ['#userScriptEditorTabMode option[value="classic"]', 'Classic'],
+            ['#userScriptEditorTabMode option[value="smart"]', 'Smart'],
+            ['#userScriptEditorTabMode option[value="indent"]', 'Indent width:'],
+            ['#userScriptEditorSelectionMatch option[value="cursor"]', 'Cursor'],
+            ['#userScriptEditorSelectionMatch option[value="selection"]', 'Selection'],
+            ['#userScriptEditorSelectionMatch option[value="off"]', 'Off'],
+            ['#userScriptSandboxMode option[value="default"]', 'Automatic'],
+            ['#userScriptSandboxMode option[value="forceDOM"]', 'Main DOM'],
+            ['#userScriptInjectionTiming option[value="reload"]', 'On next page load'],
+            ['#userScriptInjectionTiming option[value="live"]', 'Apply to current matching tabs']
+        ].forEach(([selector, key]) => setTextBySelector(selector, key));
         // Atualiza o badge de status da extensão com o texto correto no idioma atual
         updateExtensionStatus();
 
@@ -1455,11 +1508,11 @@ function loadAllActionNamesForConfig() {
         }
 
         clearTimeout(saveTimeout);
-        saveNotification.classList.remove('show', 'save-error');
+        saveNotification.classList.remove('show', 'save-error', 'save-success', 'save-warning');
 
         const textElement = saveNotification.querySelector('.save-text');
         if (textElement) {
-            textElement.textContent = message;
+            textElement.textContent = getI18nText(message);
         } else {
             console.error(".save-text element not found in saveNotification.");
             return;
@@ -1474,9 +1527,7 @@ function loadAllActionNamesForConfig() {
             progressBar.style.backgroundColor = type === 'error' ? 'var(--red-btn, #dc3545)' : 'var(--green-btn, #28a745)';
         }
 
-        if (type === 'error') {
-            saveNotification.classList.add('save-error');
-        }
+        saveNotification.classList.add(type === 'error' ? 'save-error' : (type === 'warning' ? 'save-warning' : 'save-success'));
 
         saveNotification.classList.add('show');
         if (progressBar) {
@@ -1484,7 +1535,7 @@ function loadAllActionNamesForConfig() {
         }
 
         saveTimeout = setTimeout(() => {
-            saveNotification.classList.remove('show', 'save-error');
+            saveNotification.classList.remove('show', 'save-error', 'save-success', 'save-warning');
             if (progressBar) {
                 progressBar.style.width = '0';
             }
@@ -1766,7 +1817,7 @@ function loadAllActionNamesForConfig() {
             blacklist,
             blacklistSites: blacklist.join('\n'),
             feedbackMode: data.feedbackMode === 'floatbox' ? 'floatbox' : 'none',
-            userScriptEditorEnabled: data.userScriptEditorEnabled !== false,
+            userScriptEditorEnabled: data.userScriptEditorEnabled === true,
             userScriptEditorTheme: editorTheme,
             userScriptEditorFontSize: editorFontSize,
             userScriptEditorKeyMap: editorKeyMap,
@@ -1808,7 +1859,7 @@ function loadAllActionNamesForConfig() {
             sandboxMode: activeSandboxSelect ? activeSandboxSelect.value : 'default',
             blacklist,
             feedbackMode: elements.feedbackFloatbox && elements.feedbackFloatbox.checked ? 'floatbox' : 'none',
-            userScriptEditorEnabled: elements.userScriptEditorEnabled ? elements.userScriptEditorEnabled.checked : true,
+            userScriptEditorEnabled: elements.userScriptEditorEnabled ? elements.userScriptEditorEnabled.checked : false,
             userScriptEditorTheme: elements.userScriptEditorTheme ? elements.userScriptEditorTheme.value : 'monokai',
             userScriptEditorFontSize: elements.userScriptEditorFontSize ? elements.userScriptEditorFontSize.value : '100',
             userScriptEditorKeyMap: elements.userScriptEditorKeyMap ? elements.userScriptEditorKeyMap.value : 'vscode',
@@ -3370,6 +3421,12 @@ function setInlineUserScriptValue(value) {
             ? inlineScriptEditor.getWrapperElement()
             : scriptEditorContainer;
 
+        editorKeyTarget.addEventListener('mousedown', warnIfUserScriptEditorDisabled, true);
+        editorKeyTarget.addEventListener('touchstart', warnIfUserScriptEditorDisabled, true);
+        editorKeyTarget.addEventListener('keydown', (event) => {
+            if (warnIfUserScriptEditorDisabled(event)) return;
+        }, true);
+
         editorKeyTarget.addEventListener('keydown', (event) => {
             if (inlineScriptEditor && typeof inlineScriptEditor.setOption === 'function') {
                 return;
@@ -3988,6 +4045,17 @@ function applyUserScriptEditorSettings(settingsData = null) {
     scheduleUserScriptEditorVisualRefresh(settings);
     scheduleUserScriptSyntaxCheck(settings);
     refreshInlineScriptEditorLayout();
+}
+
+function warnIfUserScriptEditorDisabled(event) {
+    const settings = normalizeSettings(readSettingsFromUi());
+    if (settings.userScriptEditorEnabled) return false;
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    showTemporaryMessage('Enable the editor first.', 'warning', 2400);
+    return true;
 }
 
 function setUserScriptEditorExpanded(expanded, options = {}) {
@@ -5563,7 +5631,7 @@ function aplicarDadosConfiguracao(config) {
     }
 
     function normalizeOcrRule(rule = {}, index = 1) {
-        const action = ['click', 'doubleClick', 'scroll', 'fill', 'check'].includes(rule.action) ? rule.action : 'click';
+        const action = ['click', 'doubleClick', 'scroll', 'fill', 'check', 'captureText'].includes(rule.action) ? rule.action : 'click';
         return {
             id: rule.id ? String(rule.id) : `ocr-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
             name: rule.name || `OCR action ${String(index).padStart(2, '0')}`,
@@ -5578,6 +5646,7 @@ function aplicarDadosConfiguracao(config) {
             scrollAmount: Number.isFinite(Number(rule.scrollAmount)) ? Math.max(40, Number(rule.scrollAmount)) : 520,
             checkKind: rule.checkKind === 'switch' ? 'switch' : 'checkbox',
             fillValue: rule.fillValue || '',
+            capturedText: rule.capturedText || '',
             intervalMs: Number.isFinite(Number(rule.intervalMs)) ? Math.max(10, Number(rule.intervalMs)) : 1000,
             repeat: Number.isFinite(Number(rule.repeat)) ? Number(rule.repeat) : 1,
             disabled: rule.disabled === true,
@@ -5671,6 +5740,15 @@ function aplicarDadosConfiguracao(config) {
 
     function renderOcrRules() {
         if (!ocrRulesList) return;
+        ocrRules = ocrRules
+            .slice()
+            .sort((a, b) => String(a.createdAt || '').localeCompare(String(b.createdAt || '')))
+            .map((rule, index) => normalizeOcrRule({
+            ...rule,
+            name: /^OCR action \d+$/i.test(String(rule.name || '').trim())
+                ? `OCR action ${String(index + 1).padStart(2, '0')}`
+                : rule.name
+        }, index + 1));
         ocrRulesList.innerHTML = '';
 
         const listHeader = document.createElement('div');
@@ -5745,7 +5823,8 @@ function aplicarDadosConfiguracao(config) {
                 ['doubleClick', 'Double click'],
                 ['scroll', 'Scroll'],
                 ['fill', 'Fill'],
-                ['check', 'Check / switch']
+                ['check', 'Check / switch'],
+                ['captureText', 'Capture text']
             ], rule.action);
 
             const actionModeSelect = createSelect([
@@ -6348,6 +6427,11 @@ function loadConfigurationsFromStorage() {
             statusElement.textContent = isEnabled ? enabledText : disabledText;
             statusElement.classList.toggle('status-enabled', isEnabled);
             statusElement.classList.toggle('status-disabled', !isEnabled);
+            if (acfhExtensionConnected && !isEnabled) {
+                showExtensionDisabledNotice();
+            } else if (isEnabled) {
+                clearExtensionDisabledNotice();
+            }
         });
     }
 

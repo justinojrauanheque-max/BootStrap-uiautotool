@@ -167,6 +167,22 @@
         'No Click and Fill configuration selected.': { pt: 'Nenhuma configuracao Click and Fill selecionada.', es: 'Ninguna configuracion Click and Fill seleccionada.', fr: 'Aucune configuration Click and Fill selectionnee.', de: 'Keine Click and Fill-Konfiguration ausgewaehlt.', it: 'Nessuna configurazione Click and Fill selezionata.', nl: 'Geen Click and Fill-configuratie geselecteerd.', pl: 'Nie wybrano konfiguracji Click and Fill.', ru: 'Konfiguratsiya Click and Fill ne vybrana.', zh: 'Wei xuanze Click and Fill peizhi.', ja: 'Click and Fill settei ga sentaku sareteimasen.', ko: 'Click and Fill seoljeong-i seontaekdoeji anhasseumnida.', ar: 'Lam yatim tahdid iidad Click and Fill.', hi: 'No Click and Fill configuration selected.' }
     });
 
+    Object.assign(TEXT, {
+        'Theme:': { pt: 'Tema:', es: 'Tema:', fr: 'Theme:', de: 'Theme:', it: 'Tema:', nl: 'Thema:', pl: 'Motyw:', ru: 'Tema:', zh: 'Zhuti:', ja: 'Teema:', ko: 'Tema:', ar: 'Almawdu:', hi: 'Theme:' },
+        'Font size:': { pt: 'Tamanho da fonte:', es: 'Tamano de fuente:', fr: 'Taille de police:', de: 'Schriftgroesse:', it: 'Dimensione fonte:', nl: 'Lettergrootte:', pl: 'Rozmiar czcionki:', ru: 'Razmer shrifta:', zh: 'Ziti daxiao:', ja: 'Fonto saizu:', ko: 'Geulkkol keugi:', ar: 'Hajm alkhat:', hi: 'Font size:' },
+        'Keymap:': { pt: 'Mapeamento de Chaves:', es: 'Mapa de teclas:', fr: 'Raccourcis clavier:', de: 'Tastenbelegung:', it: 'Mappa tasti:', nl: 'Toetsmap:', pl: 'Mapa klawiszy:', ru: 'Raskladka klavish:', zh: 'Anjian yingse:', ja: 'Kiimappu:', ko: 'Kimab:', ar: 'Khareetat almafatih:', hi: 'Keymap:' },
+        'Enable editor': { pt: 'Habilitar editor', es: 'Activar editor', fr: 'Activer l editeur', de: 'Editor aktivieren', it: 'Abilita editor', nl: 'Editor inschakelen', pl: 'Wlacz edytor', ru: 'Vklyuchit redaktor', zh: 'Qiyong bianjiqi', ja: 'Editor wo yuko ni suru', ko: 'Editor kyeogi', ar: 'Tafaeel almuharrir', hi: 'Enable editor' },
+        'Enable the editor first.': { pt: 'Habilite o editor primeiro.', es: 'Activa primero el editor.', fr: 'Activez d abord l editeur.', de: 'Aktivieren Sie zuerst den Editor.', it: 'Abilita prima l editor.', nl: 'Schakel eerst de editor in.', pl: 'Najpierw wlacz edytor.', ru: 'Snachala vklyuchite redaktor.', zh: 'Qing xian qiyong bianjiqi.', ja: 'Mazu editor wo yuko ni shite kudasai.', ko: 'Meonjeo editor reul kyeoseyo.', ar: 'Fael almuharrir awalan.', hi: 'Enable the editor first.' },
+        'Extension disabled. Activate it to run automations.': { pt: 'A extensao esta desativada. Ative para executar automacoes.', es: 'La extension esta desactivada. Activala para ejecutar automatizaciones.', fr: 'L extension est desactivee. Activez-la pour executer les automatisations.', de: 'Die Erweiterung ist deaktiviert. Aktivieren Sie sie zum Ausfuehren.', it: 'L estensione e disattivata. Attivala per eseguire automazioni.', nl: 'De extensie is uitgeschakeld. Zet haar aan om automatiseringen uit te voeren.', pl: 'Rozszerzenie jest wylaczone. Wlacz je, aby uruchamiac automatyzacje.', ru: 'Rasshirenie otklyucheno. Vklyuchite ego dlya avtomatizatsii.', zh: 'Kuozhan yi guanbi. Qing qiyong hou yunxing.', ja: 'Kakucho wa mukou desu. Yuko ni shite jikko.', ko: 'Hwakjang peurogeuraem-i kkeojyeo isseumnida.', ar: 'Alidafa muattala. Faelha littanfidh.', hi: 'Extension disabled. Activate it to run automations.' },
+        'Classic': { pt: 'Classico', es: 'Clasico', fr: 'Classique', de: 'Klassisch', it: 'Classico', nl: 'Klassiek', pl: 'Klasyczny', ru: 'Klassicheskiy', zh: 'Jingdian', ja: 'Kurasikku', ko: 'Keullaesik', ar: 'Klasiki', hi: 'Classic' },
+        'Smart': { pt: 'Inteligente', es: 'Inteligente', fr: 'Intelligent', de: 'Smart', it: 'Intelligente', nl: 'Slim', pl: 'Inteligentny', ru: 'Umnyy', zh: 'Zhineng', ja: 'Sumato', ko: 'Seumateu', ar: 'Dhaki', hi: 'Smart' },
+        'Spaces': { pt: 'Espacos', es: 'Espacios', fr: 'Espaces', de: 'Leerzeichen', it: 'Spazi', nl: 'Spaties', pl: 'Spacje', ru: 'Probely', zh: 'Kongge', ja: 'Supeesu', ko: 'Gongbaek', ar: 'Faraghat', hi: 'Spaces' },
+        'Tabs': { pt: 'Guias', es: 'Tabuladores', fr: 'Tabulations', de: 'Tabs', it: 'Tab', nl: 'Tabs', pl: 'Tabulatory', ru: 'Taby', zh: 'Tab', ja: 'Tabu', ko: 'Taeb', ar: 'Tabs', hi: 'Tabs' },
+        'Off': { pt: 'Desativado', es: 'Desactivado', fr: 'Desactive', de: 'Aus', it: 'Disattivo', nl: 'Uit', pl: 'Wyl.', ru: 'Vykl', zh: 'Guan', ja: 'Off', ko: 'Off', ar: 'Off', hi: 'Off' },
+        'Selection': { pt: 'Selecao', es: 'Seleccion', fr: 'Selection', de: 'Auswahl', it: 'Selezione', nl: 'Selectie', pl: 'Zaznaczenie', ru: 'Vybor', zh: 'Xuanze', ja: 'Sentaku', ko: 'Seontaek', ar: 'Tahdid', hi: 'Selection' },
+        'Main DOM': { pt: 'DOM principal', es: 'DOM principal', fr: 'DOM principal', de: 'Haupt-DOM', it: 'DOM principale', nl: 'Hoofd-DOM', pl: 'Glowny DOM', ru: 'Glavnyy DOM', zh: 'Zhu DOM', ja: 'Mein DOM', ko: 'Mein DOM', ar: 'DOM alraeesi', hi: 'Main DOM' }
+    });
+
     function normalizeLang(lang) {
         const short = String(lang || '').toLowerCase().split('-')[0];
         return LANGUAGES[short] ? short : DEFAULT_LANG;
@@ -288,11 +304,14 @@
     function updateLanguageControls(lang) {
         const normalized = normalizeLang(lang);
         document.querySelectorAll('[data-acfh-lang-current]').forEach((el) => {
-            el.textContent = LANGUAGES[normalized].short;
+            el.innerHTML = '<svg class="topbar-lang-globe" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3a14 14 0 0 1 0 18"></path><path d="M12 3a14 14 0 0 0 0 18"></path></svg>';
+            el.setAttribute('title', LANGUAGES[normalized].label);
+            el.setAttribute('aria-label', LANGUAGES[normalized].label);
         });
         document.querySelectorAll('[data-acfh-lang-option]').forEach((el) => {
             const active = normalizeLang(el.getAttribute('data-acfh-lang-option')) === normalized;
             el.setAttribute('aria-pressed', active ? 'true' : 'false');
+            el.classList.toggle('active', active);
         });
     }
 

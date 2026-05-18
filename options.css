@@ -119,6 +119,25 @@ body {
     overflow: hidden;
 }
 
+body:has(.landing) {
+    overflow: hidden;
+}
+
+.docs-section,
+.test-section,
+.privacy-section {
+    height: calc(100vh - 58px);
+    overflow: hidden;
+}
+
+.docs-content,
+.test-content,
+.privacy-content {
+    max-height: calc(100vh - 126px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
 .docs-sidebar,
 .test-sidebar,
 .privacy-sidebar {
@@ -1797,6 +1816,10 @@ header.site-header {
     gap: 10px;
 }
 
+.topbar-links .topbar-lang {
+    order: -1;
+}
+
 .topbar-lang {
     position: relative;
     display: inline-flex;
@@ -1836,6 +1859,15 @@ header.site-header {
     height: 14px;
 }
 
+.topbar-lang-globe {
+    width: 17px;
+    height: 17px;
+    display: block;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    fill: none;
+}
+
 .topbar-lang-menu {
     position: absolute;
     top: 44px;
@@ -1870,7 +1902,9 @@ header.site-header {
 }
 
 .topbar-lang-option:hover,
-.topbar-lang-option:focus-visible {
+.topbar-lang-option:focus-visible,
+.topbar-lang-option.active,
+.topbar-lang-option[aria-pressed="true"] {
     background: radial-gradient(circle at left, rgba(59, 130, 246, 0.28), transparent 60%);
     outline: none;
 }
@@ -3241,47 +3275,81 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .save-notification {
     position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%);
-    min-width: 220px;
-    max-width: 420px;
-    padding: 8px 16px;
-    border-radius: 999px;
-    background: radial-gradient(circle at top left, rgba(16, 185, 129, 0.28), transparent 55%),
-                rgba(15, 23, 42, 0.96);
-    border: 1px solid rgba(148, 163, 184, 0.45);
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+    top: 58px;
+    left: 0;
+    right: 0;
+    transform: translateX(-100%);
+    min-width: 0;
+    max-width: none;
+    padding: 11px 18px;
+    border-radius: 0;
+    background: linear-gradient(90deg, #047857, #16a34a);
+    border: 0;
+    border-bottom: 1px solid rgba(187, 247, 208, 0.35);
+    box-shadow: 0 12px 30px rgba(5, 150, 105, 0.24);
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     opacity: 0;
     visibility: hidden;
-    z-index: 2000;
-    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out, transform 0.3s ease-in-out;
+    z-index: 100003;
+    transition: opacity 0.26s ease-in-out, visibility 0.26s ease-in-out, transform 0.32s ease-out;
 }
 
 .save-notification.show {
     opacity: 1;
     visibility: visible;
-    transform: translateX(-50%) translateY(0);
+    transform: translateX(0);
 }
 
 .save-notification .save-text {
     color: var(--text-light);
-    font-size: calc(var(--font-size-small) * 0.95);
+    font-size: 14px;
     display: block;
     white-space: nowrap;           /* mantém tudo em uma linha */
     overflow: hidden;              /* corta excesso de texto */
     text-overflow: ellipsis;       /* mostra "..." se passar do limite */
     text-align: center;
-    font-weight: 500;
+    font-weight: 800;
 }
 
 .save-notification.save-error {
-    background: radial-gradient(circle at top left, rgba(248, 113, 113, 0.28), transparent 55%),
-                rgba(15, 23, 42, 0.96);
+    background: linear-gradient(90deg, #991b1b, #dc2626);
+    border-bottom-color: rgba(254, 202, 202, 0.35);
+    box-shadow: 0 12px 30px rgba(127, 29, 29, 0.36);
+}
+
+.save-notification.save-warning {
+    background: linear-gradient(90deg, #92400e, #f59e0b);
+    border-bottom-color: rgba(253, 230, 138, 0.35);
+    box-shadow: 0 12px 30px rgba(146, 64, 14, 0.3);
+}
+
+.acfh-top-feedback {
+    position: fixed;
+    top: 58px;
+    left: 0;
+    right: 0;
+    z-index: 100002;
+    padding: 11px 18px;
+    color: #fff;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 14px;
+    text-align: center;
+    animation: acfhMissingSlide 420ms ease-out both;
+}
+
+.acfh-top-feedback-error {
+    background: linear-gradient(90deg, #991b1b, #dc2626);
+    border-bottom: 1px solid rgba(254, 202, 202, 0.35);
+    box-shadow: 0 12px 30px rgba(127, 29, 29, 0.36);
+}
+
+.acfh-top-feedback a {
+    color: #fff;
+    font-weight: 800;
+    margin-left: 10px;
 }
 
 .save-progress-bar {
@@ -6226,7 +6294,23 @@ html[data-options-session="ocr"] .config-section-panels > #ocr-tab {
     gap: 10px;
     min-height: 0;
     overflow: auto;
-    padding-right: 4px;
+    padding-right: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: #3b82f6 rgba(15, 23, 42, 0.72);
+}
+
+.ocr-rules-list::-webkit-scrollbar {
+    width: 7px;
+}
+
+.ocr-rules-list::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.72);
+    border-radius: 999px;
+}
+
+.ocr-rules-list::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #60a5fa, #2563eb);
+    border-radius: 999px;
 }
 
 .ocr-rule-list-header {
@@ -7372,6 +7456,14 @@ html.acfh-extension-missing .top-header-bar {
 }
 
 .review-reminder-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 100010;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(2, 6, 23, 0.72);
+    backdrop-filter: blur(10px);
     animation: reviewFadeIn 180ms ease-out both;
 }
 
@@ -7384,6 +7476,13 @@ html.acfh-extension-missing .top-header-bar {
     min-height: 280px;
     padding: 34px;
     border-radius: 8px;
+    display: grid;
+    gap: 26px;
+    background:
+        radial-gradient(circle at 20% 0%, rgba(59, 130, 246, 0.24), transparent 42%),
+        linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(20, 29, 51, 0.98));
+    border: 1px solid rgba(96, 165, 250, 0.38);
+    box-shadow: 0 34px 90px rgba(0, 0, 0, 0.58);
 }
 
 .review-reminder-dialog strong {
@@ -7408,6 +7507,22 @@ html.acfh-extension-missing .top-header-bar {
     border-radius: 8px;
     font-size: 0.98rem;
     font-weight: 700;
+    border: 1px solid rgba(148, 163, 184, 0.34);
+    cursor: pointer;
+}
+
+.review-reminder-actions a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #2563eb, #0ea5e9);
+    color: #fff;
+    text-decoration: none;
+}
+
+.review-reminder-actions button {
+    background: rgba(15, 23, 42, 0.72);
+    color: #e5e7eb;
 }
 
 @keyframes reviewFadeIn {
@@ -7453,6 +7568,23 @@ body:has(#baixar) {
 
 .config-sidebar {
     border-radius: 0;
+    width: 310px;
+    min-width: 310px;
+}
+
+#baixar .config-content {
+    grid-template-columns: 310px minmax(0, 1fr) 300px;
+}
+
+@media (min-width: 1500px) {
+    #baixar .config-content {
+        grid-template-columns: 320px minmax(0, 1fr) 300px;
+    }
+
+    .config-sidebar {
+        width: 320px;
+        min-width: 320px;
+    }
 }
 
 :root[data-options-session="click-fill"] .config-details,

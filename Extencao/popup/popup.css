@@ -1,0 +1,208 @@
+/* Estilos globais para o corpo do pop-up */
+body {
+    font-family: var(--font-family-sans, 'Roboto', sans-serif);
+    width: 240px;
+    min-width: 240px;
+    padding: 14px;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    background:
+        radial-gradient(circle at top left, rgba(59, 130, 246, 0.22), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.18), transparent 55%),
+        #020617;
+    color: var(--text-light, #e0e0e0);
+    border-radius: 16px;
+    box-shadow: 0 20px 55px rgba(0, 0, 0, 0.85);
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    box-sizing: border-box;
+}
+
+/* Contêiner principal */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: 10px;
+}
+
+/* Header grudado no topo, estilo parecido com options */
+.header {
+    width: calc(100% + 28px);
+    margin: -14px -14px 0 -14px;
+    padding: 8px 12px;
+    background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.35), transparent 55%),
+                rgba(15, 23, 42, 0.96);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.28);
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Título da extensão */
+.title {
+    font-size: var(--font-size-xl, 1.1rem);
+    color: #e5e7eb;
+    margin: 0;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+/* Cartão principal com visual de vidro */
+.card {
+    width: 100%;
+    padding: 18px 14px 20px;
+    box-sizing: border-box;
+    border-radius: 14px;
+    background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.18), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.12), transparent 55%),
+        rgba(15, 23, 42, 0.94);
+    border: 1px solid rgba(51, 104, 220, 0.7);
+    box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(15, 23, 42, 0.9) inset;
+}
+
+/* Contêiner do botão de toggle */
+.toggle-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+}
+
+/* Halo circular atrás do botão */
+.toggle-container::before {
+    content: "";
+    position: absolute;
+    width: 82px;
+    height: 82px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.45), transparent 60%);
+    opacity: 0.35;
+    filter: blur(1px);
+}
+
+/* Ícone de botão de energia (SVG) */
+.power-icon {
+    width: 64px;
+    height: 64px;
+    cursor: pointer;
+    transition: transform 0.18s ease, filter 0.25s ease, fill 0.25s ease;
+    fill: var(--red-btn, #f97373);
+    margin: 0 auto;
+    filter: drop-shadow(0 0 14px rgba(239, 68, 68, 0.55));
+}
+
+.power-icon.on {
+    fill: var(--green-btn, #4ade80);
+    filter: drop-shadow(0 0 16px rgba(34, 197, 94, 0.65));
+}
+
+.power-icon:hover {
+    transform: scale(1.06);
+}
+
+/* Texto de status em formato de pill */
+.status-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 999px;
+    background: radial-gradient(circle at top left, rgba(148, 163, 184, 0.25), transparent 55%),
+                rgba(15, 23, 42, 0.96);
+    border: 1px solid rgba(148, 163, 184, 0.55);
+    color: #e5e7eb;
+    text-align: center;
+    margin-top: 4px;
+    box-shadow: 0 0 18px rgba(15, 23, 42, 0.9);
+}
+
+/* Cores dinâmicas do pill baseado no estado do botão */
+.power-icon.on + .status-label {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(16, 185, 129, 0.35));
+    border-color: rgba(34, 197, 94, 0.8);
+    color: #bbf7d0;
+}
+
+.power-icon:not(.on) + .status-label {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.18), rgba(127, 29, 29, 0.6));
+    border-color: rgba(248, 113, 113, 0.9);
+    color: #fee2e2;
+}
+
+/* Rodapé em estilo glass, colado nas bordas */
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: calc(100% + 28px);
+    margin: 2px -14px -14px -14px;
+    background:
+        linear-gradient(90deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.94));
+    backdrop-filter: blur(12px);
+    padding: 8px 10px;
+    box-sizing: border-box;
+    border-top: 1px solid rgba(30, 64, 175, 0.55);
+}
+
+/* Estilo do link de Documentação */
+.documentation-link {
+    color: var(--secondary-teal, #38bdf8);
+    text-decoration: none;
+    font-size: var(--font-size-small, 0.82rem);
+    transition: color 0.25s ease, opacity 0.25s ease;
+    padding: 4px 8px;
+    border-radius: 999px;
+    opacity: 0.9;
+}
+
+.documentation-link:hover {
+    color: var(--secondary-teal-hover, #22d3ee);
+    opacity: 1;
+    text-decoration: underline;
+}
+
+/* Estilo do botão de configurações */
+.config-button {
+    background: transparent;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.18s ease, background-color 0.18s ease;
+    border-radius: 8px;
+}
+
+.config-button:hover {
+    background-color: rgba(148, 163, 184, 0.14);
+    transform: scale(1.05);
+}
+
+/* Estilo do ícone SVG de engrenagem */
+.fa-icon_cogs {
+    width: 22px;
+    height: 22px;
+    fill: var(--text-light, #e5e7eb);
+    transition: fill 0.25s ease, transform 0.25s ease;
+}
+
+.config-button:hover .fa-icon_cogs {
+    fill: var(--primary-blue, #60a5fa);
+    transform: rotate(22deg);
+}
