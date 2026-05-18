@@ -1,37 +1,87 @@
 <!DOCTYPE html>
 <html lang="en" class="acfh-lang-init-pending">
 <head>
-    <base href="https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/">
     <meta charset="UTF-8">
     <meta name="google-adsense-account" content="ca-pub-7923004905601195">
     <title>Auto Clicker - Form Helper</title>
     <!-- Icon + assets at the web project level -->
-    <link rel="icon" href="https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/images/logo.png" type="image/x-icon">
+    <link rel="icon" href="https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/Ext/images/logo-128.png" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="options.css">
+    <script>
+        (function () {
+            var session = 'click-fill';
+            try {
+                var storedSession = localStorage.getItem('acfhOptionsSession');
+                var storedMode = localStorage.getItem('activeAutomationMode');
+                if (storedMode) {
+                    try { storedMode = JSON.parse(storedMode); } catch (e) {}
+                }
+                if (storedMode === 'ocr' || storedSession === 'ocr') {
+                    session = 'ocr';
+                } else if (storedMode === 'userscript' || storedSession === 'userscript') {
+                    session = 'userscript';
+                }
+            } catch (e) {
+                session = 'click-fill';
+            }
+            document.documentElement.dataset.optionsSession = session;
+        })();
+    </script>
+    <link rel="stylesheet" href="options.css?v=ocr-session-15">
+    <style>
+        @media (min-width: 1024px) {
+            #baixar {
+                width: 100%;
+            }
+
+            .top-header-bar {
+                padding: 0 18px;
+            }
+
+            .topbar-inner {
+                max-width: calc(100vw - 36px);
+            }
+
+            #baixar .config-content {
+                width: calc(100vw - 36px) !important;
+                max-width: calc(100vw - 36px) !important;
+                margin: 62px auto 0 !important;
+                height: calc(100vh - 62px) !important;
+                box-sizing: border-box;
+            }
+
+            .config-header {
+                width: calc(100vw - 36px) !important;
+                max-width: calc(100vw - 36px) !important;
+                left: 50%;
+                right: auto;
+                transform: translateX(-50%);
+            }
+        }
+    </style>
     <!-- CodeMirror (shared at web /lib level) -->
-    <link rel="stylesheet" href="https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/lib/codemirror/codemirror.css">
+    <link rel="stylesheet" href="/lib/codemirror/codemirror.css">
     <!-- monokai.css is directly in /lib/codemirror/ -->
-    <link rel="stylesheet" href="https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/lib/codemirror/monokai.css">
+    <link rel="stylesheet" href="/lib/codemirror/monokai.css">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7923004905601195"
      crossorigin="anonymous"></script>
-    <script src="https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/lib/codemirror/codemirror.js"></script>
-    <script src="https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/lib/codemirror/mode/javascript/javascript.js"></script>
-    <script src="https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/lib/codemirror/addon/edit/matchbrackets.js"></script>
+    <script src="/lib/codemirror/codemirror.js"></script>
+    <script src="/lib/codemirror/mode/javascript/javascript.js"></script>
+    <script src="/lib/codemirror/addon/edit/matchbrackets.js"></script>
 </head>
 <body>
     <header class="site-header">
         <div class="top-header-bar">
             <div class="topbar-inner">
                 <div class="topbar-left">
-                    <a href="https://uiautotool.vercel.app" class="site-logo-square" aria-label="Auto Clicker - Form Helper home">
+                    <a href="index.html" class="site-logo-square" aria-label="Auto Clicker - Form Helper home">
                         A
                     </a>
                     <nav class="navbar" aria-label="Main navigation">
                         <ul>
-                            <li><a href="https://uiautotool.vercel.app#docs">Docs</a></li>
-                            <li><a href="https://uiautotool.vercel.app#teste">Test</a></li>
-                            <li><a href="https://uiautotool.vercel.app#privacy">Privacy policy</a></li>
+                            <li><a href="index.html#docs">Docs</a></li>
+                            <li><a href="index.html#teste">Test</a></li>
+                            <li><a href="index.html#privacy">Privacy policy</a></li>
                         </ul>
                     </nav>
                     <span class="topbar-title-desktop">Auto Clicker - Form Helper</span>
@@ -50,6 +100,20 @@
                                 <path fill="currentColor" fill-rule="evenodd" d="M256 0C114.64 0 0 114.61 0 256c0 113.09 73.34 209 175.08 242.9 12.8 2.35 17.47-5.56 17.47-12.34 0-6.08-.22-22.18-.35-43.54-71.2 15.49-86.2-34.34-86.2-34.34-11.64-29.57-28.42-37.45-28.42-37.45-23.27-15.84 1.73-15.55 1.73-15.55 25.69 1.81 39.21 26.38 39.21 26.38 22.84 39.12 59.92 27.82 74.5 21.27 2.33-16.54 8.94-27.82 16.25-34.22-56.84-6.43-116.6-28.43-116.6-126.49 0-27.95 10-50.8 26.35-68.69-2.63-6.48-11.42-32.5 2.51-67.75 0 0 21.49-6.88 70.4 26.24a242.65 242.65 0 0 1 128.18 0c48.87-33.13 70.33-26.24 70.33-26.24 14 35.25 5.18 61.27 2.55 67.75 16.41 17.9 26.31 40.75 26.31 68.69 0 98.35-59.85 120-116.88 126.32 9.19 7.9 17.38 23.53 17.38 47.41 0 34.22-.31 61.83-.31 70.23 0 6.85 4.61 14.81 17.6 12.31C438.72 464.97 512 369.08 512 256.02 512 114.62 397.37 0 256 0z"></path>
                             </svg>
                         </a>
+                        <div class="topbar-lang" aria-label="Language">
+                            <button class="topbar-lang-btn" type="button" data-acfh-lang-toggle aria-haspopup="true" aria-expanded="false">
+                                <span data-acfh-lang-current>EN</span>
+                                <svg class="topbar-lang-caret" viewBox="0 0 20 20" aria-hidden="true">
+                                    <path fill="currentColor" d="M5.5 7.5 10 12l4.5-4.5 1 1L10 14 4.5 8.5z"></path>
+                                </svg>
+                            </button>
+                            <div class="topbar-lang-menu" data-acfh-lang-menu hidden>
+                                <button class="topbar-lang-option" type="button" data-acfh-lang-option="en">English</button>
+                                <button class="topbar-lang-option" type="button" data-acfh-lang-option="pt">Portugues</button>
+                                <button class="topbar-lang-option" type="button" data-acfh-lang-option="es">Espanol</button>
+                                <button class="topbar-lang-option" type="button" data-acfh-lang-option="fr">Francais</button>
+                            </div>
+                        </div>
                         <a href="https://www.youtube.com/@mozinsanou4136" class="topbar-icon-link" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="img" class="navbar-nav-svg" height="16" width="16">
                                 <title>YouTube</title>
@@ -66,12 +130,12 @@
     <aside class="topbar-menu" hidden aria-label="Menu">
         <div class="topbar-menu-header">
             <span class="topbar-menu-title">Auto Clicker - Form Helper</span>
-            <button class="topbar-menu-close" type="button" aria-label="Close menu">�?</button>
+            <button class="topbar-menu-close" type="button" aria-label="Close menu">×</button>
         </div>
         <div class="topbar-menu-section">
-            <a class="topbar-menu-link" href="https://uiautotool.vercel.app#docs">Docs</a>
-            <a class="topbar-menu-link" href="https://uiautotool.vercel.app#teste">Test</a>
-            <a class="topbar-menu-link" href="https://uiautotool.vercel.app#privacy">Privacy policy</a>
+            <a class="topbar-menu-link" href="index.html#docs">Docs</a>
+            <a class="topbar-menu-link" href="index.html#teste">Test</a>
+            <a class="topbar-menu-link" href="index.html#privacy">Privacy policy</a>
         </div>
         <div class="topbar-menu-section topbar-menu-section-social">
             <a class="topbar-menu-iconlink" href="https://github.com/Boydayno10/Auto_Click_Iframe" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
@@ -81,6 +145,20 @@
                 </svg>
                 <span>GitHub</span>
             </a>
+            <div class="topbar-lang topbar-menu-lang" aria-label="Language">
+                <button class="topbar-lang-btn" type="button" data-acfh-lang-toggle aria-haspopup="true" aria-expanded="false">
+                    <span data-acfh-lang-current>EN</span>
+                    <svg class="topbar-lang-caret" viewBox="0 0 20 20" aria-hidden="true">
+                        <path fill="currentColor" d="M5.5 7.5 10 12l4.5-4.5 1 1L10 14 4.5 8.5z"></path>
+                    </svg>
+                </button>
+                <div class="topbar-lang-menu" data-acfh-lang-menu hidden>
+                    <button class="topbar-lang-option" type="button" data-acfh-lang-option="en">English</button>
+                    <button class="topbar-lang-option" type="button" data-acfh-lang-option="pt">Portugues</button>
+                    <button class="topbar-lang-option" type="button" data-acfh-lang-option="es">Espanol</button>
+                    <button class="topbar-lang-option" type="button" data-acfh-lang-option="fr">Francais</button>
+                </div>
+            </div>
             <a class="topbar-menu-iconlink" href="https://www.youtube.com/@mozinsanou4136" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="img" class="navbar-nav-svg" height="16" width="16">
                     <title>YouTube</title>
@@ -103,13 +181,6 @@
         <div class="config-content">
             <div class="config-sidebar">
                 <div class="sidebar-header">
-                    <button class="btn-new-config">
-                        New config
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" height="16" width="16" style="margin-left: 6px;">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                        </svg>
-                    </button>
                     <div class="search-box">
                         <input type="text" id="searchConfig" placeholder="Search configuration" list="configSuggestions">
                         <datalist id="configSuggestions"><option value="No suggestions available"></option></datalist>
@@ -137,9 +208,55 @@
                         </div>
                     </div>
                 </div>
-                <div class="config-list">
-                    <div class="config-list-desktop">
+                <div class="config-list config-session-list" aria-label="Configuration sections">
+                    <div class="config-session-entry" data-session-entry="click-fill">
+                        <button class="config-session-item active" type="button" data-options-session="click-fill" aria-selected="true">
+                            <span class="session-title">Click and fill</span>
+                            <span class="session-desc">Actions, intervals, and repeats</span>
+                            <span class="session-expand-indicator" data-session-expand="click-fill" role="button" tabindex="0" title="Show configurations">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <polyline points="9 6 15 12 9 18"></polyline>
+                                </svg>
+                            </span>
+                        </button>
+                        <div class="session-config-list-panel" data-session-config-list="click-fill" hidden>
+                            <button class="session-config-add" type="button" data-session-add="click-fill">Add</button>
+                            <div class="session-config-items" data-session-config-items="click-fill"></div>
+                        </div>
                     </div>
+                    <div class="config-session-entry" data-session-entry="ocr">
+                        <button class="config-session-item" type="button" data-options-session="ocr" aria-selected="false">
+                            <span class="session-title">OCR</span>
+                            <span class="session-desc">Visual capture actions</span>
+                            <span class="session-expand-indicator" data-session-expand="ocr" role="button" tabindex="0" title="Show OCR captures">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <polyline points="9 6 15 12 9 18"></polyline>
+                                </svg>
+                            </span>
+                        </button>
+                        <div class="session-config-list-panel" data-session-config-list="ocr" hidden>
+                            <button class="session-config-add" type="button" data-session-add="ocr">Add</button>
+                            <div class="session-config-items" data-session-config-items="ocr"></div>
+                        </div>
+                    </div>
+                    <div class="config-session-entry" data-session-entry="userscript">
+                        <button class="config-session-item" type="button" data-options-session="userscript" aria-selected="false">
+                            <span class="session-title">UserScript Editor</span>
+                            <span class="session-desc">Script Editor</span>
+                            <span class="session-expand-indicator" data-session-expand="userscript" role="button" tabindex="0" title="Show scripts">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <polyline points="9 6 15 12 9 18"></polyline>
+                                </svg>
+                            </span>
+                        </button>
+                        <div class="session-config-list-panel" data-session-config-list="userscript" hidden>
+                            <button class="session-config-add" type="button" data-session-add="userscript">Add</button>
+                            <div class="session-config-items" data-session-config-items="userscript"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="config-state-list" hidden>
+                    <div class="config-list-desktop"></div>
                     <div class="config-list-mobile">
                         <select id="configuration-list" class="form-select">
                             <option value="" disabled selected>Select a configuration</option>
@@ -148,89 +265,422 @@
                 </div>
             </div>
 
-            <div class="config-details">
-                <div class="details-header">
-                    <div class="details-header-top">
-                        <div class="settings-container">
-                            <span class="config-title-bold">Settings</span>
-                            <button id="settingsGearBtn" class="icon-btn settings-gear" title="Settings">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
-                                    <circle cx="12" cy="12" r="3"></circle>
-                                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l0 0a2 2 0 0 1-2.83 2.83l0 0a1.65 1.65 0 0 0-1.82.33l0 0a1.65 1.65 0 0 0-.5 1.52l0 0a2 2 0 0 1-2 2h0a2 2 0 0 1-2-2h0a1.65 1.65 0 0 0-1.52-.5l0 0a1.65 1.65 0 0 0-1.82-.33l0 0a2 2 0 0 1-2.83-2.83l0 0a1.65 1.65 0 0 0-.33-1.82l0 0a1.65 1.65 0 0 0-1.52-.5h0a2 2 0 0 1-2-2h0a2 2 0 0 1 2-2h0a1.65 1.65 0 0 0 1.52-.5l0 0a1.65 1.65 0 0 0 .33-1.82l0 0a2 2 0 0 1 2.83-2.83l0 0a1.65 1.65 0 0 0 1.82-.33l0 0a1.65 1.65 0 0 0 .5-1.52l0 0a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2h0a1.65 1.65 0 0 0 .5 1.52l0 0a1.65 1.65 0 0 0 1.82.33l0 0a2 2 0 0 1 2.83 2.83l0 0a1.65 1.65 0 0 0 .33 1.82l0 0a1.65 1.65 0 0 0 1.52.5h0a2 2 0 0 1 2 2h0a2 2 0 0 1-2 2h0a1.65 1.65 0 0 0-1.52.5z"></path>
-                                </svg>
-                            </button>
+            <div class="config-workspace">
+                <div class="config-details">
+                    <div class="details-header">
+                        <div class="details-header-top">
+                            <div class="settings-container">
+                                <span class="config-title-bold">Configuration</span>
+                                <button id="settingsGearBtn" class="icon-btn settings-gear" title="Settings">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l0 0a2 2 0 0 1-2.83 2.83l0 0a1.65 1.65 0 0 0-1.82.33l0 0a1.65 1.65 0 0 0-.5 1.52l0 0a2 2 0 0 1-2 2h0a2 2 0 0 1-2-2h0a1.65 1.65 0 0 0-1.52-.5l0 0a1.65 1.65 0 0 0-1.82-.33l0 0a2 2 0 0 1-2.83-2.83l0 0a1.65 1.65 0 0 0-.33-1.82l0 0a1.65 1.65 0 0 0-1.52-.5h0a2 2 0 0 1-2-2h0a2 2 0 0 1 2-2h0a1.65 1.65 0 0 0 1.52-.5l0 0a1.65 1.65 0 0 0 .33-1.82l0 0a2 2 0 0 1 2.83-2.83l0 0a1.65 1.65 0 0 0 1.82-.33l0 0a1.65 1.65 0 0 0 .5-1.52l0 0a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2h0a1.65 1.65 0 0 0 .5 1.52l0 0a1.65 1.65 0 0 0 1.82.33l0 0a2 2 0 0 1 2.83 2.83l0 0a1.65 1.65 0 0 0 .33 1.82l0 0a1.65 1.65 0 0 0 1.52.5h0a2 2 0 0 1 2 2h0a2 2 0 0 1-2 2h0a1.65 1.65 0 0 0-1.52.5z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="config-status">
+                                <span class="status-label">Status</span>
+                                <span id="extensionStatus" class="status-disabled">Disabled</span>
+                            </div>
                         </div>
-                        <div class="config-status">
-                            <span class="status-label">Status</span>
-                            <span id="extensionStatus" class="status-disabled">Disabled</span>
+                        <div class="header-action-icons">
+                            <button id="importConfigIconBtn" class="icon-btn" title="Import configurations">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path>
+                                        <polyline points="17 8 12 3 7 8"></polyline>
+                                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                                    </svg>
+                                </button>
+                                <button id="exportConfigIconBtn" class="icon-btn" title="Export configurations">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path>
+                                        <polyline points="7 10 12 15 17 10"></polyline>
+                                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                                    </svg>
+                                </button>
+                                <div class="config-color-picker">
+                                    <button id="configColorIconBtn" class="icon-btn header-color-btn" title="Configuration color" aria-haspopup="true" aria-expanded="false">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
+                                            <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
+                                            <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
+                                            <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
+                                            <path d="M12 3a9 9 0 100 18h1.5a1.8 1.8 0 001.7-2.4 1.8 1.8 0 011.7-2.4H18a6 6 0 000-12h-6z"></path>
+                                        </svg>
+                                    </button>
+                                    <div id="configColorPalette" class="config-color-popover" hidden></div>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="config-header-row">
+                        <div class="config-name-input">
+                            <label for="configName">Name</label>
+                            <input type="text" id="configName" value="">
+                        </div>
+                        <div class="config-url-input">
+                            <label for="configUrl">URL <span class="required">*</span></label>
+                            <input type="url" id="configUrl" value="">
+                        </div>
+                        <div class="config-init-wait-input">
+                            <label for="initWait">Initial delay (s)</label>
+                            <input type="number" id="initWait" value="0" min="0" step="0.1">
                         </div>
                     </div>
-                    <div class="header-action-icons">
-                        <button id="importConfigIconBtn" class="icon-btn" title="Import configurations">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path>
-                                    <polyline points="17 8 12 3 7 8"></polyline>
-                                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                                </svg>
-                            </button>
-                            <button id="exportConfigIconBtn" class="icon-btn" title="Export configurations">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path>
-                                    <polyline points="7 10 12 15 17 10"></polyline>
-                                    <line x1="12" y1="15" x2="12" y2="3"></line>
-                                </svg>
-                            </button>
-                        <button id="scriptEditorIconBtn" class="icon-btn" title="UserScript editor">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect x="3" y="4" width="18" height="16" rx="2" ry="2"></rect>
-                                    <path d="M7 9h10"></path>
-                                    <path d="M7 13h6"></path>
-                                    <path d="M7 17h4"></path>
-                                    <path d="M15 17l2 2 4-4"></path>
-                                </svg>
-                            </button>
+                    
+                    <!-- Abas/Sessões -->
+                    <div class="config-section-panels">
+<section id="click-fill-tab" class="config-tab-content active" data-options-panel="click-fill">
+  <div class="action-header">
+    <span class="action-title">Actions</span>
+    <div class="action-buttons-group">
+      <button class="btn-add-action" type="button"> Add action <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" height="16" width="16" style="margin-left: 6px;">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg> </button>
+    </div>
+  </div>
+  <div class="action-list-headers">
+    <div class="header-item header-num">#</div>
+    <div class="header-item header-name">Name</div>
+    <div class="header-item header-element-finder">Element selector <span class="info-icon" title="Element selector can be XPath or CSS selector.">i</span> </div>
+    <div class="header-item header-mode">Mode</div>
+    <div class="header-item header-interval-ms">Interval (ms) <span class="info-icon" title="Interval in milliseconds between repeats of this action.">i</span> </div>
+    <div class="header-item header-repeat">Repeat</div>
+    <div class="header-item header-actions"></div>
+  </div>
+  <div id="xpath-actions-container" class="xpath-actions-table">
+  </div>
+</section>
+<section id="ocr-tab" class="config-tab-content" data-options-panel="ocr" hidden>
+  <div class="ocr-workbench">
+    <div class="ocr-session-options">
+      <label for="ocrInjectionTiming">Runtime activation</label>
+      <select id="ocrInjectionTiming" class="form-select">
+        <option value="reload" selected>On next page load</option>
+        <option value="live">Apply to current matching tabs</option>
+      </select>
+    </div>
+    <div class="ocr-rules-title">Captured actions</div>
+    <div id="ocrRulesList" class="ocr-rules-list" aria-live="polite"></div>
+  </div>
+</section>
+<section id="userscript-tab" class="config-tab-content" data-options-panel="userscript" hidden>
+  <div class="userscript-editor-container">
+    <div class="tm-editor-menubar" role="menubar" aria-label="UserScript editor menu">
+      <div class="tm-menu" data-tm-menu="file">
+        <button class="tm-menu-trigger" type="button" role="menuitem" aria-haspopup="true">Arquivo</button>
+        <div class="tm-menu-dropdown" role="menu">
+          <button type="button" data-editor-command="newScript"><span>Novo script</span><kbd>Ctrl+N</kbd></button>
+          <button type="button" data-editor-command="saveScript"><span>Salvar</span><kbd>Ctrl+S</kbd></button>
+          <button type="button" data-editor-command="importScript"><span>Importar</span></button>
+          <button type="button" data-editor-command="exportScript"><span>Exportar</span></button>
+          <div class="tm-menu-separator"></div>
+          <button type="button" data-editor-command="deleteScript" class="danger-item"><span>Apagar script</span></button>
+        </div>
+      </div>
+      <div class="tm-menu" data-tm-menu="edit">
+        <button class="tm-menu-trigger" type="button" role="menuitem" aria-haspopup="true">Editar</button>
+        <div class="tm-menu-dropdown" role="menu">
+          <button type="button" data-editor-command="undo"><span>Desfazer</span><kbd>Ctrl+Z</kbd></button>
+          <button type="button" data-editor-command="redo"><span>Refazer</span><kbd>Shift+Ctrl+Z</kbd></button>
+          <div class="tm-menu-separator"></div>
+          <button type="button" data-editor-command="selectAll"><span>Selecionar tudo</span><kbd>Ctrl+A</kbd></button>
+          <div class="tm-menu-separator"></div>
+          <button type="button" data-editor-command="toggleLineComment"><span>Alternar comentários</span><kbd>Ctrl+/</kbd></button>
+          <button type="button" data-editor-command="toggleIndentedComment"><span>Alternar Comentário Recuado</span><kbd>Ctrl+K</kbd></button>
+          <button type="button" data-editor-command="toggleBlockComment"><span>Alternar bloquear comentário</span><kbd>Shift+Ctrl+K</kbd></button>
+          <div class="tm-menu-separator"></div>
+          <button type="button" data-editor-command="duplicateLine"><span>Linhas: duplicar</span></button>
+          <button type="button" data-editor-command="sortSelection"><span>Ordenar linhas</span></button>
+        </div>
+      </div>
+      <div class="tm-menu" data-tm-menu="selection">
+        <button class="tm-menu-trigger" type="button" role="menuitem" aria-haspopup="true">Seleção</button>
+        <div class="tm-menu-dropdown" role="menu">
+          <button type="button" data-editor-command="selectAll"><span>Selecionar tudo</span><kbd>Ctrl+A</kbd></button>
+          <button type="button" data-editor-command="selectLine"><span>Selecionar linha</span></button>
+          <button type="button" data-editor-command="duplicateLine"><span>Duplicar linha</span></button>
+        </div>
+      </div>
+      <div class="tm-menu" data-tm-menu="search">
+        <button class="tm-menu-trigger" type="button" role="menuitem" aria-haspopup="true">Localizar</button>
+        <div class="tm-menu-dropdown" role="menu">
+          <button type="button" data-editor-command="find"><span>Localizar</span><kbd>Ctrl+F</kbd></button>
+          <button type="button" data-editor-command="replace"><span>Substituir</span><kbd>Ctrl+R</kbd></button>
+          <button type="button" data-editor-command="replaceAll"><span>Substituir tudo</span><kbd>Shift+Ctrl+R</kbd></button>
+          <div class="tm-menu-separator"></div>
+          <button type="button" data-editor-command="findNext"><span>Localizar próximo</span><kbd>F3</kbd></button>
+          <button type="button" data-editor-command="findPrev"><span>Localizar anterior</span><kbd>Shift+F3</kbd></button>
+          <button type="button" data-editor-command="findSelection"><span>Localizar sob</span></button>
+          <button type="button" data-editor-command="selectAllMatches"><span>Localizar todos sob</span></button>
+          <button type="button" data-editor-command="findSelectionPrev"><span>Localizar sob anterior</span></button>
+          <div class="tm-menu-separator"></div>
+          <button type="button" data-editor-command="findIncremental"><span>Localizar incremental</span><kbd>Alt+F</kbd></button>
+        </div>
+      </div>
+      <div class="tm-menu" data-tm-menu="goto">
+        <button class="tm-menu-trigger" type="button" role="menuitem" aria-haspopup="true">Ir para</button>
+        <div class="tm-menu-dropdown" role="menu">
+          <button type="button" data-editor-command="goLine"><span>Linha...</span><kbd>Ctrl+G</kbd></button>
+          <button type="button" data-editor-command="goStart"><span>Início do arquivo</span></button>
+          <button type="button" data-editor-command="goEnd"><span>Fim do arquivo</span></button>
+        </div>
+      </div>
+      <div class="tm-menu" data-tm-menu="developer">
+        <button class="tm-menu-trigger" type="button" role="menuitem" aria-haspopup="true">Desenvolvedor</button>
+        <div class="tm-menu-dropdown" role="menu">
+          <button type="button" data-editor-command="runNow"><span>Executar na aba atual</span></button>
+          <button type="button" data-editor-command="validateHeader"><span>Validar cabeçalho</span></button>
+          <button type="button" data-editor-command="reloadTemplate"><span>Recarregar template</span></button>
+        </div>
+      </div>
+      <button id="userscriptExpandToggle" class="tm-editor-expand-toggle" type="button" aria-pressed="false" title="Expand editor">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <polyline points="7 5 14 12 7 19"></polyline>
+          <polyline points="13 5 20 12 13 19"></polyline>
+        </svg>
+      </button>
+    </div>
+    <div class="script-editor-shell">
+      <div id="scriptEditor" class="script-editor"></div>
+      <div id="scriptEditorEmpty" class="script-editor-empty" hidden></div>
+    </div>
+  </div>
+</section>
+                            </div>
+                        
+                        <!-- Sessão UserScript -->
+                    </div>
+                </div>
+
+                <div id="settingsPopup" class="config-settings-panel popup-modal">
+                    <div class="config-settings-content popup-content">
+                        <span id="closeSettingsPopup" class="close-btn">&times;</span>
+                        <div class="settings-title-group">
+                            <span class="modal-pill">Config settings</span>
+                            <h3>Config settings</h3>
                         </div>
-                </div>
-                <div class="config-header-row">
-                    <div class="config-name-input">
-                        <label for="configName">Name</label>
-                        <input type="text" id="configName" value="">
+                        <div class="config-settings-body popup-body" data-settings-panel="click-fill">
+                            <p></p>
+                            <div class="input-group-modal">
+                                <label for="configMode">Configuration mode:</label>
+                                <select id="configMode" class="form-select">
+                                    <option value="beginner" selected>Beginner</option>
+                                    <option value="advanced">Advanced</option>
+                                </select>
+                            </div>
+                            <div id="securitySection">
+                                <h4>Features</h4>
+                                <div class="input-group-modal">
+                                    <label for="sandboxMode">Sandbox mode:</label>
+                                    <select id="sandboxMode" class="form-select">
+                                        <option value="default" selected>Default</option>
+                                        <option value="forceDOM">Force DOM</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <h4 id="blacklistTitle">Blacklist</h4>
+                            <div class="input-group-modal blacklist-group blacklist-chip-group" data-blacklist-editor data-target="blacklistSites">
+                                <label for="blacklistSites">Blocked sites:</label>
+                                <textarea id="blacklistSites" class="blacklist-input blacklist-source" spellcheck="false" hidden>
+google.com
+facebook.com
+twitter.com
+instagram.com
+linkedin.com
+youtube.com
+                                </textarea>
+                                <div class="blacklist-chip-layout">
+                                    <div class="blacklist-chip-grid" data-blacklist-list></div>
+                                    <button type="button" class="blacklist-add-btn" data-blacklist-add aria-label="Add blocked site" title="Add blocked site">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+<h4 class="title-with-icon">
+    Feedback
+    <span class="info-icon" title="When you enable FloatBox mode, a floating box appears in the bottom-right corner of the page showing actions in real time.">i</span>
+</h4>
+
+               <div class="feedback-options">
+                            <input type="radio" id="feedbackNone" name="feedbackMode" value="none" checked>
+                            <label for="feedbackNone">None</label>
+                            <input type="radio" id="feedbackFloatbox" name="feedbackMode" value="floatbox">
+                            <label for="feedbackFloatbox">FloatBox</label>
+                        </div>
+                        </div>
+                        <div class="config-settings-body popup-body userscript-settings-body" data-settings-panel="userscript" hidden>
+                            <section class="userscript-settings-section">
+                                <h4>Editor</h4>
+                                <label class="userscript-setting-check">
+                                    <input type="checkbox" id="userScriptEditorEnabled" checked>
+                                    <span>Habilitar editor</span>
+                                </label>
+                                <div class="input-group-modal compact">
+                                    <label for="userScriptEditorTheme">Tema:</label>
+                                    <select id="userScriptEditorTheme" class="form-select">
+                                        <option value="default">Padrão</option>
+                                        <option value="monokai">Monokai</option>
+                                        <option value="solarized">Solarized</option>
+                                        <option value="mdn-like">MDN-like</option>
+                                        <option value="eclipse">Eclipse</option>
+                                        <option value="railscasts">RailsCasts</option>
+                                        <option value="zenburn">ZenBurn</option>
+                                    </select>
+                                </div>
+                                <div class="input-group-modal compact">
+                                    <label for="userScriptEditorFontSize">Tamanho da fonte:</label>
+                                    <select id="userScriptEditorFontSize" class="form-select">
+                                        <option value="50">50%</option>
+                                        <option value="70">70%</option>
+                                        <option value="80">80%</option>
+                                        <option value="90">90%</option>
+                                        <option value="100">100%</option>
+                                        <option value="110">110%</option>
+                                        <option value="120">120%</option>
+                                        <option value="150">150%</option>
+                                    </select>
+                                </div>
+                                <div class="input-group-modal compact">
+                                    <label for="userScriptEditorKeyMap">Mapeamento de Chaves:</label>
+                                    <select id="userScriptEditorKeyMap" class="form-select">
+                                        <option value="windows">Windows</option>
+                                        <option value="vscode">VSCode</option>
+                                        <option value="sublime">Sublime Text</option>
+                                        <option value="emacs">Emacs</option>
+                                        <option value="vim">Vim</option>
+                                    </select>
+                                </div>
+                                <div class="input-group-modal compact">
+                                    <label for="userScriptEditorIndentUnit">Largura do recuo:</label>
+                                    <select id="userScriptEditorIndentUnit" class="form-select">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+                                        <option value="11">11</option>
+                                    </select>
+                                </div>
+                                <div class="input-group-modal compact">
+                                    <label for="userScriptEditorTabSize">Tamanho da guia:</label>
+                                    <select id="userScriptEditorTabSize" class="form-select">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+                                    </select>
+                                </div>
+                                <div class="input-group-modal compact">
+                                    <label for="userScriptEditorIndentWith">Recuar com:</label>
+                                    <select id="userScriptEditorIndentWith" class="form-select">
+                                        <option value="spaces">Espaços</option>
+                                        <option value="tabs">Guias</option>
+                                    </select>
+                                </div>
+                                <div class="input-group-modal compact">
+                                    <label for="userScriptEditorTabMode">Tabulação:</label>
+                                    <select id="userScriptEditorTabMode" class="form-select">
+                                        <option value="classic">Clássico</option>
+                                        <option value="smart">Inteligente</option>
+                                        <option value="indent">Recuar</option>
+                                    </select>
+                                </div>
+                                <div class="input-group-modal compact">
+                                    <label for="userScriptEditorSelectionMatch">Destacar correspondências da seleção:</label>
+                                    <select id="userScriptEditorSelectionMatch" class="form-select">
+                                        <option value="cursor">Cursor</option>
+                                        <option value="selection">Seleção</option>
+                                        <option value="off">Desativado</option>
+                                    </select>
+                                </div>
+                                <label class="userscript-setting-check">
+                                    <input type="checkbox" id="userScriptEditorLineWrapping">
+                                    <span>Quebra de linha</span>
+                                </label>
+                                <label class="userscript-setting-check">
+                                    <input type="checkbox" id="userScriptEditorAutoIndent" checked>
+                                    <span>Auto-recuar ao digitar</span>
+                                </label>
+                                <label class="userscript-setting-check">
+                                    <input type="checkbox" id="userScriptEditorSaveOnBlur">
+                                    <span>Salvar conteúdo quando o editor perder o foco</span>
+                                </label>
+                                <label class="userscript-setting-check">
+                                    <input type="checkbox" id="userScriptEditorSuppressSaveDialog" checked>
+                                    <span>Não mostrar diálogo de confirmação para salvar</span>
+                                </label>
+                                <label class="userscript-setting-check">
+                                    <input type="checkbox" id="userScriptEditorHighlightWhitespace" checked>
+                                    <span>Destacar espaços em branco</span>
+                                </label>
+                                <label class="userscript-setting-check">
+                                    <input type="checkbox" id="userScriptEditorTrimTrailingWhitespace" checked>
+                                    <span>Remover espaço em branco das linhas modificadas</span>
+                                </label>
+                                <label class="userscript-setting-check">
+                                    <input type="checkbox" id="userScriptEditorAutoSyntaxCheck" checked>
+                                    <span>Verificação automática de sintaxe ao digitar</span>
+                                </label>
+                                <div class="input-group-modal compact">
+                                    <label for="userScriptEditorSyntaxCheckMaxSize">Tamanho máximo da verificação automática:</label>
+                                    <input type="number" id="userScriptEditorSyntaxCheckMaxSize" class="form-control" value="1000000" min="1000" step="1000">
+                                </div>
+                                <input type="checkbox" id="userScriptEditorMatchBrackets" checked hidden>
+                            </section>
+                            <section class="userscript-settings-section">
+                                <h4>Execução</h4>
+                                <label class="userscript-setting-check locked">
+                                    <input type="checkbox" checked disabled>
+                                    <span>Executar somente o script ativo</span>
+                                </label>
+                                <div class="input-group-modal compact">
+                                    <label for="userScriptSandboxMode">Execution world:</label>
+                                    <select id="userScriptSandboxMode" class="form-select">
+                                        <option value="default">Automático</option>
+                                        <option value="forceDOM">DOM principal</option>
+                                    </select>
+                                </div>
+                                <div class="input-group-modal compact">
+                                    <label for="userScriptInjectionTiming">Activation policy:</label>
+                                    <select id="userScriptInjectionTiming" class="form-select">
+                                        <option value="reload" selected>On next page load</option>
+                                        <option value="live">Apply to current matching tabs</option>
+                                    </select>
+                                </div>
+                            </section>
+                            <section class="userscript-settings-section">
+                                <h4>Segurança</h4>
+                                <div class="input-group-modal blacklist-group blacklist-chip-group" data-blacklist-editor data-target="userScriptBlacklistSites">
+                                    <label for="userScriptBlacklistSites">Sites bloqueados:</label>
+                                    <textarea id="userScriptBlacklistSites" class="blacklist-input blacklist-source" spellcheck="false" hidden></textarea>
+                                    <div class="blacklist-chip-layout">
+                                        <div class="blacklist-chip-grid" data-blacklist-list></div>
+                                        <button type="button" class="blacklist-add-btn" data-blacklist-add aria-label="Adicionar site bloqueado" title="Adicionar site bloqueado">
+                                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
                     </div>
-                    <div class="config-url-input">
-                        <label for="configUrl">URL <span class="required">*</span></label>
-                        <input type="url" id="configUrl" value="">
-                    </div>
-                    <div class="config-init-wait-input">
-                        <label for="initWait">Initial delay (s)</label>
-                        <input type="number" id="initWait" value="0" min="0" step="0.1">
-                    </div>
-                </div>
-                <div class="action-header">
-                    <span class="action-title">Actions</span>
-                    <div class="action-buttons-group">
-                        <button class="btn-add-action">
-                            Add action
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" height="16" width="16" style="margin-left: 6px;">
-                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-                <div class="action-list-headers">
-                    <div class="header-item header-num">#</div>
-                    <div class="header-item header-name">Name</div>
-                    <div class="header-item header-element-finder">Element selector
-                        <span class="info-icon" title="Element selector can be XPath or CSS selector.">i</span>
-                    </div>
-                    <div class="header-item header-mode">Mode</div>
-                    <div class="header-item header-interval-ms">Interval (ms)
-                        <span class="info-icon" title="Interval in milliseconds between repeats of this action.">i</span>
-                    </div>
-                    <div class="header-item header-repeat">Repeat</div>
-                    <div class="header-item header-actions"></div>
-                </div>
-                <div id="xpath-actions-container" class="xpath-actions-table">
                 </div>
             </div>
         </div>
@@ -371,73 +821,6 @@
             </div>
         </template>
 
-        <div id="settingsPopup" class="popup-modal">
-            <div class="popup-content">
-                <span id="closeSettingsPopup" class="close-btn">&times;</span>
-                <div class="settings-title-group">
-                    <span class="modal-pill">Settings</span>
-                    <h3>Settings</h3>
-                </div>
-                <div class="popup-body">
-                    <p></p>
-                    <!-- General -->
-                    <div class="input-group-modal">
-                        <label for="configMode">Configuration mode:</label>
-                        <select id="configMode" class="form-select">
-                            <option value="beginner" selected>Beginner</option>
-                            <option value="advanced">Advanced</option>
-                        </select>
-                    </div>
-                    <!-- Security (wrapped in div) -->
-                    <div id="securitySection">
-                        <h4>Features</h4>
-                        <div class="input-group-modal">
-                            <label for="contentScriptApi">Content Script:</label>
-                            <select id="contentScriptApi" class="form-select">
-                                <option value="dynamicUserScriptApi">None</option>
-                                <option value="userScriptApi">UserScripts</option>
-                            </select>
-                        </div>
-                        <div class="input-group-modal">
-                            <label for="sandboxMode">Sandbox mode:</label>
-                            <select id="sandboxMode" class="form-select">
-                                <option value="default" selected>Default</option>
-                                <option value="forceDOM">Force DOM</option>
-                            </select>
-                        </div>
-                    </div>
-                    <!-- Blacklist -->
-                    <h4 id="blacklistTitle">Blacklist</h4>
-                    <div class="input-group-modal blacklist-group">
-                        <label for="blacklistSites">Blocked sites:</label>
-                        <textarea id="blacklistSites" class="blacklist-input" spellcheck="false">
-google.com
-facebook.com
-twitter.com
-instagram.com
-linkedin.com
-youtube.com
-                        </textarea>
-                    </div>
-<h4 class="title-with-icon">
-    Feedback
-    <span class="info-icon" title="When you enable FloatBox mode, a floating box appears in the bottom-right corner of the page showing actions in real time.">i</span>
-</h4>
-
-           <div class="feedback-options">
-                        <input type="radio" id="feedbackNone" name="feedbackMode" value="none" checked>
-                        <label for="feedbackNone">None</label>
-                        <input type="radio" id="feedbackFloatbox" name="feedbackMode" value="floatbox">
-                        <label for="feedbackFloatbox">FloatBox</label>
-                    </div>
-                </div>
-                <div class="popup-footer">
-                    <button class="btn btn-primary btn-save-popup">Save</button>
-                    <button class="btn btn-danger btn-cancel-popup">Cancel</button>
-                </div>
-            </div>
-        </div>
-
         <script>
             (function () {
                 try {
@@ -526,11 +909,10 @@ youtube.com
             })();
         </script>
 
+        <script src="acfh-i18n.js?v=lang-1"></script>
         <script src="navbar.js"></script>
-        <script src="options.js"></script>
-        <script src="settings-processing.js"></script>
+        <script src="options.js?v=ocr-session-15"></script>
+        <script src="settings-processing.js?v=realtime-settings-2"></script>
     </section>
 </body>
 </html>
-
-
