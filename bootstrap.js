@@ -32,21 +32,31 @@
     document.head.appendChild(s);
   }
 
-  var cssCandidates = ['options.css'];
+  function assetUrl(path) {
+    return SUPABASE_BASE + '/' + String(path)
+      .split('/')
+      .map(encodeURIComponent)
+      .join('/');
+  }
+
+  var cssCandidates = ['options.css', 'opções.css', 'style.css', 'estilo.css'];
   var scriptCandidates = [
-    'acfh-i18n.js',
     'lib/codemirror/codemirror.js',
     'lib/codemirror/mode/javascript/javascript.js',
     'lib/codemirror/addon/edit/matchbrackets.js',
     'navbar.js',
+    'script.js',
     'index-processing.js',
     'settings-processing.js',
-    'options.js'
+    'options.js',
+    'opções.js',
+    'conteudo.js',
+    'conteúdo.js'
   ];
 
   // Load available CSS (attempt each, proceed regardless)
   cssCandidates.forEach(function (name) {
-    var url = SUPABASE_BASE + '/' + encodeURIComponent(name);
+    var url = assetUrl(name);
     loadCssDirect(url, function () { /* ignore result */ });
   });
 
@@ -57,7 +67,7 @@
       return;
     }
     var name = scriptCandidates[i];
-    var url = SUPABASE_BASE + '/' + encodeURIComponent(name);
+    var url = assetUrl(name);
     loadScriptDirect(url, function () { loadNext(i + 1); });
   })(0);
 

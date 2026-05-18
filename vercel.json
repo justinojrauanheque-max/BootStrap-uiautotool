@@ -26,18 +26,6 @@
     {
       "source": "/(options|runtime-config)\\.css$",
       "destination": "https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/$1.css"
-    },
-    {
-      "source": "/options.html",
-      "destination": "https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/options.html"
-    },
-    {
-      "source": "/index.html",
-      "destination": "https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/index.html"
-    },
-    {
-      "source": "/",
-      "destination": "https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/index.html"
     }
   ]
 }
