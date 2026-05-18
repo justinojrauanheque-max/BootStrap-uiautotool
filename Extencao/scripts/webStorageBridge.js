@@ -136,6 +136,7 @@
                             source: 'acfh-extension',
                             type: 'acfh-chrome-storage-changed',
                             changes: filteredChanges,
+                            initialSync: true,
                             timestamp: Date.now()
                         }, '*');
                     } catch (e) {
@@ -228,10 +229,12 @@
         if (data.type === PING_MESSAGE_TYPE) {
             try {
                 chrome.storage.local.get(['autoClickerEnabled'], (state) => {
+                    const hasAutoClickerEnabledState = !!(state && Object.prototype.hasOwnProperty.call(state, 'autoClickerEnabled'));
                     window.postMessage({
                         source: 'acfh-extension',
                         type: 'acfh-pong',
-                        autoClickerEnabled: !!(state && state.autoClickerEnabled),
+                        hasAutoClickerEnabledState,
+                        autoClickerEnabled: hasAutoClickerEnabledState ? !!state.autoClickerEnabled : null,
                         timestamp: Date.now()
                     }, '*');
                 });
@@ -240,7 +243,8 @@
                     window.postMessage({
                         source: 'acfh-extension',
                         type: 'acfh-pong',
-                        autoClickerEnabled: false,
+                        hasAutoClickerEnabledState: false,
+                        autoClickerEnabled: null,
                         timestamp: Date.now()
                     }, '*');
                 } catch (innerError) {

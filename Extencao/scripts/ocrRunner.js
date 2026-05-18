@@ -19,7 +19,17 @@
     let autoClickerEnabled = false;
     let floatBox = null;
     let floatStatus = null;
+    let floatPlayButton = null;
+    let floatStopButton = null;
     let nextRuleIndex = 0;
+    let playbackState = {
+        running: false,
+        paused: false,
+        queue: [],
+        ruleIndex: 0,
+        repeatIndex: 0,
+        token: 0
+    };
     let ocrLang = 'en';
     const ocrText = {
         en: { ready: 'Ready', disabled: 'Disabled', stopped: 'Stopped', noActions: 'No OCR actions', noTarget: 'No target', actionSent: 'Action sent', runSent: 'Run sent', preview: 'Preview', noMatch: 'No match', deleted: 'Deleted', deleteFailed: 'Delete failed', noAction: 'No action', waiting: 'Waiting' },
@@ -82,6 +92,11 @@
 
     function clearTimers() {
         runToken++;
+        playbackState.running = false;
+        playbackState.paused = false;
+        playbackState.queue = [];
+        playbackState.ruleIndex = 0;
+        playbackState.repeatIndex = 0;
         timers.forEach(timer => {
             clearInterval(timer);
             clearTimeout(timer);
@@ -89,6 +104,7 @@
         timers = [];
         observers.forEach(observer => observer.disconnect());
         observers = [];
+        updateFloatRunState();
     }
 
     function textFor(element) {
@@ -357,14 +373,89 @@
         return true;
     }
 
+    function scheduleSequentialStep(delay = 0) {
+        const token = playbackState.token;
+        const timer = setTimeout(() => {
+            if (token !== runToken || !playbackState.running) return;
+            if (playbackState.paused) {
+                scheduleSequentialStep(160);
+                return;
+            }
+
+            const rule = playbackState.queue[playbackState.ruleIndex];
+            if (!rule) {
+                playbackState.running = false;
+                playbackState.paused = false;
+                updateFloatRunState();
+                setFloatStatus(txt('ready'));
+                return;
+            }
+
+            const repeat = repeatCount(rule);
+            const current = playbackState.ruleIndex + 1;
+            const total = playbackState.queue.length;
+            const ok = executeRule(rule);
+            if (ok) {
+                playbackState.repeatIndex += 1;
+                setFloatStatus(`${current}/${total} ${playbackState.repeatIndex}${repeat === Infinity ? '' : `/${repeat}`}`);
+            } else {
+                setFloatStatus(txt('noMatch'));
+            }
+
+            if (repeat !== Infinity && playbackState.repeatIndex >= repeat) {
+                playbackState.ruleIndex += 1;
+                playbackState.repeatIndex = 0;
+                nextRuleIndex = playbackState.queue.length ? playbackState.ruleIndex % playbackState.queue.length : 0;
+            }
+
+            const nextRule = playbackState.queue[playbackState.ruleIndex] || rule;
+            const interval = Math.max(10, Number(nextRule.intervalMs) || 1000);
+            scheduleSequentialStep(interval);
+        }, delay);
+        timers.push(timer);
+    }
+
+    function startSequentialPlayback(ruleId = null) {
+        clearTimers();
+        const queue = runnableRules(ruleId);
+        if (!queue.length) {
+            setFloatStatus(txt('noActions'));
+            return false;
+        }
+        playbackState.running = true;
+        playbackState.paused = false;
+        playbackState.queue = queue;
+        playbackState.ruleIndex = ruleId ? 0 : Math.min(nextRuleIndex, queue.length - 1);
+        playbackState.repeatIndex = 0;
+        playbackState.token = runToken;
+        updateFloatRunState();
+        const initialDelayMs = Math.max(0, Number(settingsState.initWait) || 0) * 1000;
+        setFloatStatus(initialDelayMs ? `${txt('waiting')} ${Math.round(initialDelayMs / 1000)}s` : `1/${queue.length}`);
+        scheduleSequentialStep(initialDelayMs || 80);
+        return true;
+    }
+
+    function toggleSequentialPlayback(ruleId = null) {
+        if (!autoClickerEnabled) {
+            setFloatStatus(txt('disabled'));
+            return false;
+        }
+        if (!playbackState.running) {
+            return startSequentialPlayback(ruleId);
+        }
+        playbackState.paused = !playbackState.paused;
+        updateFloatRunState();
+        setFloatStatus(playbackState.paused ? 'Pause' : 'Play');
+        return true;
+    }
+
     function playRules(ruleId = null) {
         if (!autoClickerEnabled) {
             setFloatStatus(txt('disabled'));
             return false;
         }
 
-        const rules = ruleId ? rulesState.filter(rule => rule && rule.id === ruleId) : rulesState;
-        return startRules(rules);
+        return startSequentialPlayback(ruleId);
     }
 
     function runRulesOnce(ruleId = null) {
@@ -383,6 +474,16 @@
         if (!rules.length) {
             setFloatStatus(txt('noTarget'));
             return false;
+        }
+        if (playbackState.running) {
+            if (!playbackState.queue.length) {
+                return false;
+            }
+            playbackState.ruleIndex = (playbackState.ruleIndex + 1) % playbackState.queue.length;
+            playbackState.repeatIndex = 0;
+            nextRuleIndex = playbackState.ruleIndex;
+            setFloatStatus(`${playbackState.ruleIndex + 1}/${playbackState.queue.length}`);
+            return true;
         }
         const rule = rules[nextRuleIndex % rules.length];
         const currentIndex = nextRuleIndex % rules.length;
@@ -406,6 +507,20 @@
     function stopOcr() {
         clearTimers();
         setFloatStatus(txt('stopped'));
+    }
+
+    function updateFloatRunState() {
+        if (floatPlayButton) {
+            floatPlayButton.classList.toggle('active', playbackState.running);
+            floatPlayButton.setAttribute('aria-label', playbackState.running && !playbackState.paused ? 'Pause' : 'Play');
+            floatPlayButton.title = playbackState.running && !playbackState.paused ? 'Pause' : 'Play';
+            floatPlayButton.innerHTML = playbackState.running && !playbackState.paused
+                ? '<svg viewBox="0 0 24 24"><path d="M8 5v14"></path><path d="M16 5v14"></path></svg>'
+                : '<svg viewBox="0 0 24 24"><polygon points="8 5 19 12 8 19 8 5"></polygon></svg>';
+        }
+        if (floatStopButton) {
+            floatStopButton.classList.toggle('active', playbackState.running);
+        }
     }
 
     function makeIconButton(title, html, onClick, extraClass = '') {
@@ -488,7 +603,9 @@
             }
             .acfh-ocr-float-btn:hover { background: #1d4ed8; }
             .acfh-ocr-float-btn.capture { background: #0f766e; }
-            .acfh-ocr-float-btn.stop { background: #991b1b; }
+            .acfh-ocr-float-btn.stop.active,
+            .acfh-ocr-float-btn.play.active { background: #991b1b; }
+            .acfh-ocr-float-btn.danger { background: #991b1b; }
             .acfh-ocr-float-btn svg {
                 width: 17px;
                 height: 17px;
@@ -522,18 +639,18 @@
             trash: '<svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path></svg>'
         };
 
-        floatBox.append(
-            floatStatus,
-            makeIconButton('Capture', icons.capture, () => {
-                chrome.runtime.sendMessage({ action: 'startOcrCapture', targetUrl: settingsState.url, defaults: firstRuleDefaults() }, () => {});
-            }, 'capture'),
-            makeIconButton('Run now', icons.play, () => playRules()),
-            makeIconButton('Next', icons.next, () => runNextRule()),
-            makeIconButton('Preview', icons.eye, () => previewRule()),
-            makeIconButton('Stop', icons.stop, () => stopOcr(), 'stop'),
-            makeIconButton('Delete action', icons.trash, () => deleteCurrentRule(), 'stop')
-        );
+        const captureButton = makeIconButton('Capture', icons.capture, () => {
+            chrome.runtime.sendMessage({ action: 'startOcrCapture', targetUrl: settingsState.url, defaults: firstRuleDefaults() }, () => {});
+        }, 'capture');
+        floatPlayButton = makeIconButton('Play', icons.play, () => toggleSequentialPlayback(), 'play');
+        const nextButton = makeIconButton('Next', icons.next, () => runNextRule());
+        const previewButton = makeIconButton('Preview', icons.eye, () => previewRule());
+        floatStopButton = makeIconButton('Stop', icons.stop, () => stopOcr(), 'stop');
+        const deleteButton = makeIconButton('Delete action', icons.trash, () => deleteCurrentRule(), 'danger');
+
+        floatBox.append(floatStatus, captureButton, floatPlayButton, nextButton, previewButton, floatStopButton, deleteButton);
         document.body.appendChild(floatBox);
+        updateFloatRunState();
     }
 
     function removeFloatBox() {
@@ -541,6 +658,8 @@
             floatBox.remove();
             floatBox = null;
             floatStatus = null;
+            floatPlayButton = null;
+            floatStopButton = null;
         }
     }
 

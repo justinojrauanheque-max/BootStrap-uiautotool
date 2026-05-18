@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         if ('autoClickerEnabled' in changes) {
-            updateExtensionStatus();
+            updateExtensionStatus({ showNotice: data.initialSync !== true });
         }
 
         handleRealtimeStorageChanges(changes);
@@ -406,9 +406,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 pongReceived = true;
                 acfhExtensionConnected = true;
                 removeExtensionInstallNotices();
-                if (data.autoClickerEnabled === false) {
-                    showExtensionDisabledNotice();
-                }
                 window.removeEventListener('message', handlePong);
                 console.log('[ACFH] Extensão conectada à página de opções.');
                 startOptionsApp();
@@ -1007,6 +1004,15 @@ let isRenderingClickFillConfig = false;
         setTextBySelector('label[for="userScriptSandboxMode"]', 'Execution world:');
         setTextBySelector('label[for="userScriptInjectionTiming"]', 'Activation policy:');
         setTextBySelector('label[for="userScriptBlacklistSites"]', 'Blocked sites:');
+        setTextBySelector('#userScriptEditorLineWrapping + span', 'Line wrapping');
+        setTextBySelector('#userScriptEditorAutoIndent + span', 'Auto indent on input');
+        setTextBySelector('#userScriptEditorSaveOnBlur + span', 'Save content when editor loses focus');
+        setTextBySelector('#userScriptEditorSuppressSaveDialog + span', 'Do not show save confirmation dialog');
+        setTextBySelector('#userScriptEditorHighlightWhitespace + span', 'Highlight whitespace');
+        setTextBySelector('#userScriptEditorTrimTrailingWhitespace + span', 'Remove trailing whitespace from modified lines');
+        setTextBySelector('#userScriptEditorAutoSyntaxCheck + span', 'Automatic syntax check while typing');
+        setTextBySelector('label[for="userScriptEditorSyntaxCheckMaxSize"]', 'Maximum automatic check size:');
+        setTextBySelector('.userscript-settings-section:nth-of-type(2) .userscript-setting-check.locked span', 'Run only the active script');
         setTextBySelector('.userscript-settings-section:nth-of-type(1) h4', 'Editor');
         setTextBySelector('.userscript-settings-section:nth-of-type(2) h4', 'Execution');
         setTextBySelector('.userscript-settings-section:nth-of-type(3) h4', 'Security');
@@ -1508,6 +1514,10 @@ function loadAllActionNamesForConfig() {
         }
 
         clearTimeout(saveTimeout);
+        if (saveNotification._cleanupTimer) {
+            clearTimeout(saveNotification._cleanupTimer);
+            saveNotification._cleanupTimer = null;
+        }
         saveNotification.classList.remove('show', 'save-error', 'save-success', 'save-warning');
 
         const textElement = saveNotification.querySelector('.save-text');
@@ -1524,7 +1534,9 @@ function loadAllActionNamesForConfig() {
             progressBar.style.width = '0';
             progressBar.offsetWidth;
             progressBar.style.transition = 'width 1.2s linear';
-            progressBar.style.backgroundColor = type === 'error' ? 'var(--red-btn, #dc3545)' : 'var(--green-btn, #28a745)';
+            progressBar.style.backgroundColor = type === 'error'
+                ? 'var(--red-btn, #dc3545)'
+                : (type === 'warning' ? '#f59e0b' : 'var(--green-btn, #28a745)');
         }
 
         saveNotification.classList.add(type === 'error' ? 'save-error' : (type === 'warning' ? 'save-warning' : 'save-success'));
@@ -1535,7 +1547,11 @@ function loadAllActionNamesForConfig() {
         }
 
         saveTimeout = setTimeout(() => {
-            saveNotification.classList.remove('show', 'save-error', 'save-success', 'save-warning');
+            saveNotification.classList.remove('show');
+            saveNotification._cleanupTimer = setTimeout(() => {
+                saveNotification.classList.remove('save-error', 'save-success', 'save-warning');
+                saveNotification._cleanupTimer = null;
+            }, 360);
             if (progressBar) {
                 progressBar.style.width = '0';
             }
@@ -2185,7 +2201,7 @@ function loadAllActionNamesForConfig() {
         }
 
         if ('autoClickerEnabled' in changes) {
-            updateExtensionStatus();
+            updateExtensionStatus({ showNotice: true });
         }
     }
 
@@ -3830,7 +3846,7 @@ function saveInlineUserScript(showMessage = true) {
     }, () => {
         renderSessionConfigLists();
         setScriptSavedIndicator(true);
-        if (showMessage && !settings.userScriptEditorSuppressSaveDialog) {
+        if (showMessage) {
             showTemporaryMessage('UserScript saved.', 'success', 2000);
         }
         chrome.runtime.sendMessage({
@@ -6412,7 +6428,7 @@ function loadConfigurationsFromStorage() {
     });
 }
 
-    function updateExtensionStatus() {
+    function updateExtensionStatus(options = {}) {
         const statusElement = document.getElementById('extensionStatus');
         if (!statusElement) {
             console.error("extensionStatus element not found.");
@@ -6420,6 +6436,7 @@ function loadConfigurationsFromStorage() {
         }
 
         acfhStorage.get(['autoClickerEnabled'], (data) => {
+            const hasExplicitState = data && Object.prototype.hasOwnProperty.call(data, 'autoClickerEnabled');
             const isEnabled = !!data.autoClickerEnabled;
             const enabledText = translations.statusEnabledLabel || (currentUiLanguage === 'en' ? 'Enabled' : 'Ativada');
             const disabledText = translations.statusDisabledLabel || (currentUiLanguage === 'en' ? 'Disabled' : 'Desativada');
@@ -6427,7 +6444,7 @@ function loadConfigurationsFromStorage() {
             statusElement.textContent = isEnabled ? enabledText : disabledText;
             statusElement.classList.toggle('status-enabled', isEnabled);
             statusElement.classList.toggle('status-disabled', !isEnabled);
-            if (acfhExtensionConnected && !isEnabled) {
+            if (options.showNotice && acfhExtensionConnected && hasExplicitState && !isEnabled) {
                 showExtensionDisabledNotice();
             } else if (isEnabled) {
                 clearExtensionDisabledNotice();
@@ -6476,7 +6493,7 @@ chrome.storage.onChanged.addListener((changes, area) => {
             updateScriptEditorButtonVisibility();
         }
         if ('autoClickerEnabled' in changes) {
-            updateExtensionStatus();
+            updateExtensionStatus({ showNotice: true });
         }
     }
 });
