@@ -3,21 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auto Clicker - Form Helper</title>
-    <meta http-equiv="refresh" content="0; url=https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/index.html">
-    <script>
-        window.location.href = 'https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/index.html';
-    </script>
-    <style>
-        body { margin: 0; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; text-align: center; background: #f5f5f5; }
-        p { color: #666; }
-        a { color: #0066cc; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-    </style>
+    <title>Loading...</title>
 </head>
 <body>
-    <h1>Auto Clicker - Form Helper</h1>
-    <p>Loading content from Supabase...</p>
-    <p>If you are not redirected automatically, <a href="https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/index.html">click here</a>.</p>
+    <div class="acfh-skeleton-overlay acfh-loading-overlay"></div>
+    
+    <script>
+    // bootstrap.js - Loads public assets from the Supabase `web` bucket
+    (function () {
+      'use strict';
+
+      var SUPABASE_BASE = 'https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web';
+      window.ACFH_SUPABASE_BASE = SUPABASE_BASE;
+
+      function loadCssDirect(href, cb) {
+        var l = document.createElement('link');
+        var done = false;
+        l.rel = 'stylesheet';
+        l.href = href;
+        l.onload = function () { if (done) return; done = true; cb(true); };
+        l.onerror = function () { if (done) return; done = true; cb(false); };
+        setTimeout(function () { if (done) return; done = true; cb(false); }, 5000);
+        document.head.appendChild(l);
+      }
+
+      function loadScriptDirect(url, cb) {
+        var s = document.createElement('script');
+        var done = false;
+        s.src = url;
+        s.defer = true;
+        s.onload = function () { if (done) return; done = true; cb(true); };
+        s.onerror = function () { if (done) return; done = true; cb(false); };
+        setTimeout(function () { if (done) return; done = true; cb(false); }, 7000);
+        document.head.appendChild(s);
+      }
+
+      var cssCandidates = ['options.css'];
+      var scriptCandidates = [
+        'acfh-i18n.js',
+        'lib/codemirror/codemirror.js',
+        'lib/codemirror/mode/javascript/javascript.js',
+        'lib/codemirror/addon/edit/matchbrackets.js',
+        'navbar.js',
+        'index-processing.js',
+        'settings-processing.js',
+        'options.js'
+      ];
+
+      cssCandidates.forEach(function (name) {
+        var url = SUPABASE_BASE + '/' + encodeURIComponent(name);
+        loadCssDirect(url, function () { });
+      });
+
+      (function loadNext(i) {
+        if (i >= scriptCandidates.length) {
+          finish();
+          return;
+        }
+        var name = scriptCandidates[i];
+        var url = SUPABASE_BASE + '/' + encodeURIComponent(name);
+        loadScriptDirect(url, function () { loadNext(i + 1); });
+      })(0);
+
+      function finish() {
+        try {
+          var overlay = document.querySelector('.acfh-skeleton-overlay');
+          if (overlay) {
+            overlay.classList.remove('acfh-loading-overlay');
+            overlay.style.display = 'none';
+          }
+        } catch (e) { }
+        try { 
+          var body = document.body;
+          var xhr = new XMLHttpRequest();
+          xhr.open('GET', SUPABASE_BASE + '/index.html', true);
+          xhr.onload = function() {
+            if (xhr.status === 200) {
+              var parser = new DOMParser();
+              var doc = parser.parseFromString(xhr.responseText, 'text/html');
+              body.innerHTML = doc.body.innerHTML;
+              var styles = doc.head.querySelectorAll('link[rel="stylesheet"], style');
+              styles.forEach(function(s) { document.head.appendChild(document.importNode(s, true)); });
+              var scripts = doc.body.querySelectorAll('script');
+              scripts.forEach(function(s) { body.appendChild(document.importNode(s, true)); });
+            }
+          };
+          xhr.send();
+        } catch (e) { }
+        try { window.dispatchEvent(new Event('acfh:bootstrap:loaded')); } catch (e) {}
+      }
+    })();
+    </script>
 </body>
 </html>
