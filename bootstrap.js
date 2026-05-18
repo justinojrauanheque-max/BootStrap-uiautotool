@@ -39,21 +39,22 @@
       .join('/');
   }
 
-  var cssCandidates = ['options.css', 'opções.css', 'style.css', 'estilo.css'];
+  var cssCandidates = [
+    'options.css',
+    'lib/codemirror/codemirror.css',
+    'lib/codemirror/monokai.css'
+  ];
+
   var scriptCandidates = [
+    'acfh-i18n.js',
     'lib/codemirror/codemirror.js',
     'lib/codemirror/mode/javascript/javascript.js',
     'lib/codemirror/addon/edit/matchbrackets.js',
     'navbar.js',
-    'script.js',
-    'index-processing.js',
     'settings-processing.js',
-    'options.js',
-    'opções.js',
-    'conteudo.js',
-    'conteúdo.js'
+    'index-processing.js',
+    'options.js'
   ];
-
   // Load available CSS (attempt each, proceed regardless)
   cssCandidates.forEach(function (name) {
     var url = assetUrl(name);
