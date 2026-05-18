@@ -9,37 +9,41 @@
     <div class="acfh-skeleton-overlay acfh-loading-overlay"></div>
     
     <script>
-    // bootstrap.js - Loads public assets from the Supabase `web` bucket
+    // bootstrap.js - Loads public assets from the Supabase web bucket and injects full page
     (function () {
       'use strict';
 
       var SUPABASE_BASE = 'https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web';
       window.ACFH_SUPABASE_BASE = SUPABASE_BASE;
 
-      function loadCssDirect(href, cb) {
-        var l = document.createElement('link');
-        var done = false;
-        l.rel = 'stylesheet';
-        l.href = href;
-        l.onload = function () { if (done) return; done = true; cb(true); };
-        l.onerror = function () { if (done) return; done = true; cb(false); };
-        setTimeout(function () { if (done) return; done = true; cb(false); }, 5000);
-        document.head.appendChild(l);
+      // Carrega CSS em paralelo
+      function loadCss(href) {
+        return new Promise(function(resolve) {
+          var l = document.createElement('link');
+          l.rel = 'stylesheet';
+          l.href = href;
+          l.onload = function() { resolve(true); };
+          l.onerror = function() { resolve(false); };
+          setTimeout(function() { resolve(false); }, 5000);
+          document.head.appendChild(l);
+        });
       }
 
-      function loadScriptDirect(url, cb) {
-        var s = document.createElement('script');
-        var done = false;
-        s.src = url;
-        s.defer = true;
-        s.onload = function () { if (done) return; done = true; cb(true); };
-        s.onerror = function () { if (done) return; done = true; cb(false); };
-        setTimeout(function () { if (done) return; done = true; cb(false); }, 7000);
-        document.head.appendChild(s);
+      // Carrega Script sequencialmente
+      function loadScript(url) {
+        return new Promise(function(resolve) {
+          var s = document.createElement('script');
+          s.src = url;
+          s.async = false;
+          s.onload = function() { resolve(true); };
+          s.onerror = function() { resolve(false); };
+          setTimeout(function() { resolve(false); }, 7000);
+          document.body.appendChild(s);
+        });
       }
 
-      var cssCandidates = ['options.css'];
-      var scriptCandidates = [
+      var cssFiles = ['options.css'];
+      var scriptFiles = [
         'acfh-i18n.js',
         'lib/codemirror/codemirror.js',
         'lib/codemirror/mode/javascript/javascript.js',
@@ -50,22 +54,27 @@
         'options.js'
       ];
 
-      cssCandidates.forEach(function (name) {
+      // Carrega CSS (paralelo)
+      cssFiles.forEach(function(name) {
         var url = SUPABASE_BASE + '/' + encodeURIComponent(name);
-        loadCssDirect(url, function () { });
+        loadCss(url);
       });
 
-      (function loadNext(i) {
-        if (i >= scriptCandidates.length) {
-          finish();
+      // Carrega Scripts sequencialmente depois carrega HTML
+      (function loadAllScripts(index) {
+        if (index >= scriptFiles.length) {
+          // Todos os scripts carregados, agora carrega a HTML
+          loadPageContent();
           return;
         }
-        var name = scriptCandidates[i];
+        var name = scriptFiles[index];
         var url = SUPABASE_BASE + '/' + encodeURIComponent(name);
-        loadScriptDirect(url, function () { loadNext(i + 1); });
+        loadScript(url).then(function() {
+          loadAllScripts(index + 1);
+        });
       })(0);
 
-      function finish() {
+      function loadPageContent() {
         try {
           var overlay = document.querySelector('.acfh-skeleton-overlay');
           if (overlay) {
@@ -73,23 +82,47 @@
             overlay.style.display = 'none';
           }
         } catch (e) { }
-        try { 
-          var body = document.body;
-          var xhr = new XMLHttpRequest();
-          xhr.open('GET', SUPABASE_BASE + '/options.html', true);
-          xhr.onload = function() {
-            if (xhr.status === 200) {
+
+        // Fetch a página HTML completa do Supabase
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', SUPABASE_BASE + '/options.html', true);
+        xhr.onload = function() {
+          if (xhr.status === 200) {
+            try {
               var parser = new DOMParser();
               var doc = parser.parseFromString(xhr.responseText, 'text/html');
-              body.innerHTML = doc.body.innerHTML;
-              var styles = doc.head.querySelectorAll('link[rel="stylesheet"], style');
-              styles.forEach(function(s) { document.head.appendChild(document.importNode(s, true)); });
-              var scripts = doc.body.querySelectorAll('script');
-              scripts.forEach(function(s) { body.appendChild(document.importNode(s, true)); });
+              
+              // Substitui o body
+              document.body.innerHTML = doc.body.innerHTML;
+              
+              // Adiciona styles do head
+              var headStyles = doc.head.querySelectorAll('link[rel="stylesheet"], style');
+              headStyles.forEach(function(s) { 
+                document.head.appendChild(document.importNode(s, true)); 
+              });
+              
+              // Carrega e executa scripts inline do documento
+              var bodyScripts = doc.body.querySelectorAll('script');
+              bodyScripts.forEach(function(s, idx) {
+                var newScript = document.createElement('script');
+                if (s.src) {
+                  newScript.src = s.src;
+                } else {
+                  newScript.textContent = s.textContent;
+                }
+                newScript.async = false;
+                document.body.appendChild(newScript);
+              });
+            } catch (e) {
+              console.error('Erro ao processar página:', e);
             }
-          };
-          xhr.send();
-        } catch (e) { }
+          }
+        };
+        xhr.onerror = function() {
+          console.error('Erro ao carregar página HTML');
+        };
+        xhr.send();
+
         try { window.dispatchEvent(new Event('acfh:bootstrap:loaded')); } catch (e) {}
       }
     })();
