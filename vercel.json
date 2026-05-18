@@ -20,30 +20,6 @@
       "destination": "https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/Ext/:path*"
     },
     {
-      "source": "/acfh-i18n.js",
-      "destination": "https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/acfh-i18n.js"
-    },
-    {
-      "source": "/index-processing.js",
-      "destination": "https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/index-processing.js"
-    },
-    {
-      "source": "/navbar.js",
-      "destination": "https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/navbar.js"
-    },
-    {
-      "source": "/settings-processing.js",
-      "destination": "https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/settings-processing.js"
-    },
-    {
-      "source": "/options.js",
-      "destination": "https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/options.js"
-    },
-    {
-      "source": "/options.css",
-      "destination": "https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/options.css"
-    },
-    {
       "source": "/runtime-config.json",
       "destination": "https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/runtime-config.json"
     }
