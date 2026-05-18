@@ -1,0 +1,43 @@
+{
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/lib/(.*)",
+      "destination": "https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/lib/$1"
+    },
+    {
+      "source": "/Ext/(.*)",
+      "destination": "https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/Ext/$1"
+    },
+    {
+      "source": "/(acfh-i18n|index-processing|navbar|settings-processing|options)\\.js$",
+      "destination": "https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/$1.js"
+    },
+    {
+      "source": "/(options|runtime-config)\\.css$",
+      "destination": "https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/$1.css"
+    },
+    {
+      "source": "/options.html",
+      "destination": "https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/options.html"
+    },
+    {
+      "source": "/index.html",
+      "destination": "https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/index.html"
+    },
+    {
+      "source": "/",
+      "destination": "https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/index.html"
+    }
+  ]
+}

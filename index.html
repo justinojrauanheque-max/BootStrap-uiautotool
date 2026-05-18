@@ -6,188 +6,54 @@
     <title>Loading...</title>
 </head>
 <body>
-    <div class="acfh-skeleton-overlay acfh-loading-overlay"></div>
+    <div class="acfh-skeleton-overlay acfh-loading-overlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #f5f5f5; display: flex; align-items: center; justify-content: center; z-index: 9999;">
+        <div style="text-align: center; font-family: system-ui, -apple-system, sans-serif;">
+            <h2>Loading...</h2>
+            <p>Fetching resources from Supabase</p>
+        </div>
+    </div>
     
     <script>
-    (function () {
-      'use strict';
-      
-      var SUPABASE_BASE = 'https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web';
-      window.ACFH_SUPABASE_BASE = SUPABASE_BASE;
-      
-      console.log('[ACFH Bootstrap] Iniciando carregamento de recursos');
-
-      // Função para carregar CSS
-      function loadCss(href) {
-        return new Promise(function(resolve) {
-          var l = document.createElement('link');
-          l.rel = 'stylesheet';
-          l.href = href + '?t=' + Date.now();
-          l.onload = function() { 
-            console.log('[CSS] ✓ Carregado:', href);
-            resolve(true); 
-          };
-          l.onerror = function() { 
-            console.warn('[CSS] ✗ Erro:', href);
-            resolve(false); 
-          };
-          setTimeout(function() { resolve(false); }, 8000);
-          document.head.appendChild(l);
-        });
-      }
-
-      // Função para carregar Script
-      function loadScript(url) {
-        return new Promise(function(resolve) {
-          console.log('[Script] Carregando:', url);
-          var s = document.createElement('script');
-          s.src = url + '?t=' + Date.now();
-          s.async = false;
-          var done = false;
-          
-          s.onload = function() {
-            if (done) return;
-            done = true;
-            console.log('[Script] ✓ Carregado:', url);
-            resolve(true);
-          };
-          
-          s.onerror = function() {
-            if (done) return;
-            done = true;
-            console.warn('[Script] ✗ Erro:', url);
-            resolve(false);
-          };
-          
-          setTimeout(function() {
-            if (!done) {
-              done = true;
-              console.warn('[Script] ✗ Timeout:', url);
-              resolve(false);
+    (function() {
+        'use strict';
+        
+        // Definir base URL global
+        window.ACFH_SUPABASE_BASE = 'https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web';
+        
+        console.log('[ACFH] Bootstrap iniciado');
+        console.log('[ACFH] Verificando se os recursos estão sendo servidos via Vercel');
+        
+        // Aguardar um pouco para os scripts carregarem via rewrites do Vercel
+        var checkCount = 0;
+        var checkInterval = setInterval(function() {
+            checkCount++;
+            
+            // Verificar se os scripts globais existem
+            if (window.ACFH_I18N || window.CodeMirror) {
+                clearInterval(checkInterval);
+                console.log('[ACFH] ✓ Scripts detectados! Limpando overlay...');
+                hideOverlay();
+            } else if (checkCount > 50) {
+                clearInterval(checkInterval);
+                console.warn('[ACFH] Timeout aguardando scripts, mas continuando...');
+                hideOverlay();
             }
-          }, 10000);
-          
-          document.head.appendChild(s);
-        });
-      }
-
-      // Lista de CSS
-      var cssFiles = [
-        'options.css',
-        'lib/codemirror/codemirror.css',
-        'lib/codemirror/monokai.css'
-      ];
-
-      // Lista de Scripts (em ordem de dependência)
-      var scriptFiles = [
-        'acfh-i18n.js',
-        'lib/codemirror/codemirror.js',
-        'lib/codemirror/mode/javascript/javascript.js',
-        'lib/codemirror/addon/edit/matchbrackets.js',
-        'navbar.js',
-        'index-processing.js',
-        'settings-processing.js',
-        'options.js'
-      ];
-
-      console.log('[ACFH Bootstrap] Carregando', cssFiles.length, 'arquivos CSS');
-      console.log('[ACFH Bootstrap] Carregando', scriptFiles.length, 'arquivos JS');
-
-      // Carrega CSS em paralelo
-      Promise.all(cssFiles.map(function(name) {
-        var url = SUPABASE_BASE + '/' + encodeURIComponent(name);
-        return loadCss(url);
-      })).then(function() {
-        console.log('[ACFH Bootstrap] Todos os CSS carregados');
-      });
-
-      // Carrega Scripts sequencialmente
-      (function loadAllScripts(index) {
-        if (index >= scriptFiles.length) {
-          console.log('[ACFH Bootstrap] Todos os scripts carregados! Injetando HTML...');
-          loadPageContent();
-          return;
+        }, 100);
+        
+        function hideOverlay() {
+            var overlay = document.querySelector('.acfh-skeleton-overlay');
+            if (overlay) {
+                overlay.style.display = 'none';
+            }
         }
-        var name = scriptFiles[index];
-        var url = SUPABASE_BASE + '/' + encodeURIComponent(name);
-        loadScript(url).then(function() {
-          loadAllScripts(index + 1);
-        });
-      })(0);
-
-      function loadPageContent() {
-        try {
-          var overlay = document.querySelector('.acfh-skeleton-overlay');
-          if (overlay) {
-            overlay.classList.remove('acfh-loading-overlay');
-            overlay.style.display = 'none';
-          }
-        } catch (e) { }
-
-        var xhr = new XMLHttpRequest();
-        var pageUrl = window.location.pathname.includes('options') ? '/options.html' : '/index.html';
-        var fullUrl = SUPABASE_BASE + pageUrl;
         
-        console.log('[ACFH Bootstrap] Carregando página:', fullUrl);
-        
-        xhr.open('GET', fullUrl, true);
-        xhr.onload = function() {
-          if (xhr.status === 200) {
+        // Dispara evento quando estiver pronto
+        setTimeout(function() {
             try {
-              console.log('[ACFH Bootstrap] HTML recebida, injetando...');
-              var parser = new DOMParser();
-              var doc = parser.parseFromString(xhr.responseText, 'text/html');
-              
-              // Substitui o body
-              document.body.innerHTML = '';
-              var bodyContent = doc.body.innerHTML;
-              document.body.innerHTML = bodyContent;
-              
-              console.log('[ACFH Bootstrap] HTML injetada com sucesso');
-              
-              // Adiciona styles do head
-              var headStyles = doc.head.querySelectorAll('link[rel="stylesheet"], style');
-              headStyles.forEach(function(s) { 
-                document.head.appendChild(document.importNode(s, true)); 
-              });
-              
-              // Carrega e executa scripts
-              var bodyScripts = doc.body.querySelectorAll('script');
-              console.log('[ACFH Bootstrap] Encontrados', bodyScripts.length, 'scripts inline');
-              
-              bodyScripts.forEach(function(s, idx) {
-                try {
-                  var newScript = document.createElement('script');
-                  if (s.src) {
-                    newScript.src = s.src;
-                  } else {
-                    newScript.textContent = s.textContent;
-                  }
-                  newScript.async = false;
-                  document.body.appendChild(newScript);
-                  console.log('[Inline Script]', idx + 1, '✓');
-                } catch(e) {
-                  console.error('[Inline Script]', idx + 1, '✗', e);
-                }
-              });
-              
-              console.log('[ACFH Bootstrap] ✓ Página carregada completamente!');
-            } catch (e) {
-              console.error('[ACFH Bootstrap] Erro ao processar página:', e);
-            }
-          } else {
-            console.error('[ACFH Bootstrap] Erro HTTP:', xhr.status);
-          }
-        };
-        
-        xhr.onerror = function() {
-          console.error('[ACFH Bootstrap] Erro ao carregar página HTML');
-        };
-        
-        xhr.send();
-
-        try { window.dispatchEvent(new Event('acfh:bootstrap:loaded')); } catch (e) {}
-      }
+                window.dispatchEvent(new Event('acfh:bootstrap:loaded'));
+                console.log('[ACFH] ✓ Event acfh:bootstrap:loaded disparado');
+            } catch(e) {}
+        }, 1000);
     })();
     </script>
 </body>
