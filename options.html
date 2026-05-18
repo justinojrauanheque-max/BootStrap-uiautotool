@@ -5,8 +5,16 @@
     <meta name="google-adsense-account" content="ca-pub-7923004905601195">
     <title>Auto Clicker - Form Helper</title>
     <style>
-        html.acfh-options-boot body > :not(.settings-processing-overlay) {
-            visibility: hidden;
+        html.acfh-options-boot body {
+            overflow: hidden;
+        }
+
+        html.acfh-options-boot body > * {
+            visibility: hidden !important;
+        }
+
+        html.acfh-options-boot body > .settings-processing-overlay.acfh-initial-processing {
+            visibility: visible !important;
         }
 
         .settings-processing-overlay.acfh-initial-processing {
@@ -79,11 +87,17 @@
             }
 
             #baixar .config-content {
-                width: calc(100vw - 36px) !important;
-                max-width: calc(100vw - 36px) !important;
-                margin: 62px auto 0 !important;
-                height: calc(100vh - 62px) !important;
+                position: fixed !important;
+                top: 58px !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                width: 100vw !important;
+                max-width: none !important;
+                margin: 0 !important;
+                height: auto !important;
                 box-sizing: border-box;
+                border-radius: 0 !important;
             }
 
             .config-header {
@@ -151,6 +165,16 @@
                                 <button class="topbar-lang-option" type="button" data-acfh-lang-option="pt">Portugues</button>
                                 <button class="topbar-lang-option" type="button" data-acfh-lang-option="es">Espanol</button>
                                 <button class="topbar-lang-option" type="button" data-acfh-lang-option="fr">Francais</button>
+                                <button class="topbar-lang-option" type="button" data-acfh-lang-option="de">Deutsch</button>
+                                <button class="topbar-lang-option" type="button" data-acfh-lang-option="it">Italiano</button>
+                                <button class="topbar-lang-option" type="button" data-acfh-lang-option="nl">Nederlands</button>
+                                <button class="topbar-lang-option" type="button" data-acfh-lang-option="pl">Polski</button>
+                                <button class="topbar-lang-option" type="button" data-acfh-lang-option="ru">Russkiy</button>
+                                <button class="topbar-lang-option" type="button" data-acfh-lang-option="zh">Zhongwen</button>
+                                <button class="topbar-lang-option" type="button" data-acfh-lang-option="ja">Nihongo</button>
+                                <button class="topbar-lang-option" type="button" data-acfh-lang-option="ko">Hanguk-eo</button>
+                                <button class="topbar-lang-option" type="button" data-acfh-lang-option="ar">Al-Arabiya</button>
+                                <button class="topbar-lang-option" type="button" data-acfh-lang-option="hi">Hindi</button>
                             </div>
                         </div>
                         <a href="https://www.youtube.com/@mozinsanou4136" class="topbar-icon-link" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
@@ -196,6 +220,16 @@
                     <button class="topbar-lang-option" type="button" data-acfh-lang-option="pt">Portugues</button>
                     <button class="topbar-lang-option" type="button" data-acfh-lang-option="es">Espanol</button>
                     <button class="topbar-lang-option" type="button" data-acfh-lang-option="fr">Francais</button>
+                    <button class="topbar-lang-option" type="button" data-acfh-lang-option="de">Deutsch</button>
+                    <button class="topbar-lang-option" type="button" data-acfh-lang-option="it">Italiano</button>
+                    <button class="topbar-lang-option" type="button" data-acfh-lang-option="nl">Nederlands</button>
+                    <button class="topbar-lang-option" type="button" data-acfh-lang-option="pl">Polski</button>
+                    <button class="topbar-lang-option" type="button" data-acfh-lang-option="ru">Russkiy</button>
+                    <button class="topbar-lang-option" type="button" data-acfh-lang-option="zh">Zhongwen</button>
+                    <button class="topbar-lang-option" type="button" data-acfh-lang-option="ja">Nihongo</button>
+                    <button class="topbar-lang-option" type="button" data-acfh-lang-option="ko">Hanguk-eo</button>
+                    <button class="topbar-lang-option" type="button" data-acfh-lang-option="ar">Al-Arabiya</button>
+                    <button class="topbar-lang-option" type="button" data-acfh-lang-option="hi">Hindi</button>
                 </div>
             </div>
             <a class="topbar-menu-iconlink" href="https://www.youtube.com/@mozinsanou4136" target="_blank" rel="noopener noreferrer" aria-label="YouTube">

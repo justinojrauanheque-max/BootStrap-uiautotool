@@ -5287,6 +5287,9 @@ function aplicarDadosConfiguracao(config) {
     }
 
     function getActiveColorConfiguration() {
+        if (activeOptionsSession === ACTIVE_AUTOMATION_MODE_OCR) {
+            return normalizeOcrSettings(ocrSettings || {});
+        }
         return getActiveClickFillConfig();
     }
 
@@ -5372,7 +5375,7 @@ function aplicarDadosConfiguracao(config) {
         applyToSessionLabel.className = 'config-color-session-option';
         applyToSessionLabel.innerHTML = `
             <input type="checkbox" class="config-color-session-checkbox">
-            <span>Apply to session</span>
+            <span>${window.ACFH_I18N && typeof window.ACFH_I18N.t === 'function' ? window.ACFH_I18N.t('Apply to session', currentUiLanguage) : 'Apply to session'}</span>
         `;
         applyToSessionLabel.addEventListener('click', (event) => {
             event.stopPropagation();
@@ -5682,7 +5685,9 @@ function aplicarDadosConfiguracao(config) {
         if (!ocrRules.length) {
             const empty = document.createElement('div');
             empty.className = 'ocr-empty-state';
-            empty.textContent = 'No OCR captures yet.';
+            empty.textContent = window.ACFH_I18N && typeof window.ACFH_I18N.t === 'function'
+                ? window.ACFH_I18N.t('No OCR captures yet.', currentUiLanguage)
+                : 'No OCR captures yet.';
             ocrRulesList.appendChild(empty);
             return;
         }

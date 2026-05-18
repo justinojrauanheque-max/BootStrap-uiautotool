@@ -225,6 +225,40 @@ body:has(.landing) .site-footer {
     }
 }
 
+/* Final layout lock for the public options workspace. */
+body:has(#baixar) {
+    overflow: hidden !important;
+}
+
+#baixar.conteudo {
+    position: fixed !important;
+    top: 58px !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+}
+
+#baixar .config-content {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+}
+
+#baixar .config-header {
+    border-radius: 0 !important;
+}
+
 html[data-options-session="click-fill"] .settings-container .settings-gear,
 html[data-options-session="click-fill"] .config-status {
     display: none;
