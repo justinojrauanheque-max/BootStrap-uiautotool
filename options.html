@@ -9,40 +9,76 @@
     <div class="acfh-skeleton-overlay acfh-loading-overlay"></div>
     
     <script>
-    // bootstrap.js - Loads public assets from the Supabase web bucket and injects full page
     (function () {
       'use strict';
-
+      
       var SUPABASE_BASE = 'https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web';
       window.ACFH_SUPABASE_BASE = SUPABASE_BASE;
+      
+      console.log('[ACFH Bootstrap] Iniciando carregamento de recursos');
 
-      // Carrega CSS em paralelo
+      // Função para carregar CSS
       function loadCss(href) {
         return new Promise(function(resolve) {
           var l = document.createElement('link');
           l.rel = 'stylesheet';
-          l.href = href;
-          l.onload = function() { resolve(true); };
-          l.onerror = function() { resolve(false); };
-          setTimeout(function() { resolve(false); }, 5000);
+          l.href = href + '?t=' + Date.now();
+          l.onload = function() { 
+            console.log('[CSS] ✓ Carregado:', href);
+            resolve(true); 
+          };
+          l.onerror = function() { 
+            console.warn('[CSS] ✗ Erro:', href);
+            resolve(false); 
+          };
+          setTimeout(function() { resolve(false); }, 8000);
           document.head.appendChild(l);
         });
       }
 
-      // Carrega Script sequencialmente
+      // Função para carregar Script
       function loadScript(url) {
         return new Promise(function(resolve) {
+          console.log('[Script] Carregando:', url);
           var s = document.createElement('script');
-          s.src = url;
+          s.src = url + '?t=' + Date.now();
           s.async = false;
-          s.onload = function() { resolve(true); };
-          s.onerror = function() { resolve(false); };
-          setTimeout(function() { resolve(false); }, 7000);
-          document.body.appendChild(s);
+          var done = false;
+          
+          s.onload = function() {
+            if (done) return;
+            done = true;
+            console.log('[Script] ✓ Carregado:', url);
+            resolve(true);
+          };
+          
+          s.onerror = function() {
+            if (done) return;
+            done = true;
+            console.warn('[Script] ✗ Erro:', url);
+            resolve(false);
+          };
+          
+          setTimeout(function() {
+            if (!done) {
+              done = true;
+              console.warn('[Script] ✗ Timeout:', url);
+              resolve(false);
+            }
+          }, 10000);
+          
+          document.head.appendChild(s);
         });
       }
 
-      var cssFiles = ['options.css'];
+      // Lista de CSS
+      var cssFiles = [
+        'options.css',
+        'lib/codemirror/codemirror.css',
+        'lib/codemirror/monokai.css'
+      ];
+
+      // Lista de Scripts (em ordem de dependência)
       var scriptFiles = [
         'acfh-i18n.js',
         'lib/codemirror/codemirror.js',
@@ -54,16 +90,21 @@
         'options.js'
       ];
 
-      // Carrega CSS (paralelo)
-      cssFiles.forEach(function(name) {
+      console.log('[ACFH Bootstrap] Carregando', cssFiles.length, 'arquivos CSS');
+      console.log('[ACFH Bootstrap] Carregando', scriptFiles.length, 'arquivos JS');
+
+      // Carrega CSS em paralelo
+      Promise.all(cssFiles.map(function(name) {
         var url = SUPABASE_BASE + '/' + encodeURIComponent(name);
-        loadCss(url);
+        return loadCss(url);
+      })).then(function() {
+        console.log('[ACFH Bootstrap] Todos os CSS carregados');
       });
 
-      // Carrega Scripts sequencialmente depois carrega HTML
+      // Carrega Scripts sequencialmente
       (function loadAllScripts(index) {
         if (index >= scriptFiles.length) {
-          // Todos os scripts carregados, agora carrega a HTML
+          console.log('[ACFH Bootstrap] Todos os scripts carregados! Injetando HTML...');
           loadPageContent();
           return;
         }
@@ -83,17 +124,26 @@
           }
         } catch (e) { }
 
-        // Fetch a página HTML completa do Supabase
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', SUPABASE_BASE + '/options.html', true);
+        var pageUrl = window.location.pathname.includes('options') ? '/options.html' : '/index.html';
+        var fullUrl = SUPABASE_BASE + pageUrl;
+        
+        console.log('[ACFH Bootstrap] Carregando página:', fullUrl);
+        
+        xhr.open('GET', fullUrl, true);
         xhr.onload = function() {
           if (xhr.status === 200) {
             try {
+              console.log('[ACFH Bootstrap] HTML recebida, injetando...');
               var parser = new DOMParser();
               var doc = parser.parseFromString(xhr.responseText, 'text/html');
               
               // Substitui o body
-              document.body.innerHTML = doc.body.innerHTML;
+              document.body.innerHTML = '';
+              var bodyContent = doc.body.innerHTML;
+              document.body.innerHTML = bodyContent;
+              
+              console.log('[ACFH Bootstrap] HTML injetada com sucesso');
               
               // Adiciona styles do head
               var headStyles = doc.head.querySelectorAll('link[rel="stylesheet"], style');
@@ -101,26 +151,39 @@
                 document.head.appendChild(document.importNode(s, true)); 
               });
               
-              // Carrega e executa scripts inline do documento
+              // Carrega e executa scripts
               var bodyScripts = doc.body.querySelectorAll('script');
+              console.log('[ACFH Bootstrap] Encontrados', bodyScripts.length, 'scripts inline');
+              
               bodyScripts.forEach(function(s, idx) {
-                var newScript = document.createElement('script');
-                if (s.src) {
-                  newScript.src = s.src;
-                } else {
-                  newScript.textContent = s.textContent;
+                try {
+                  var newScript = document.createElement('script');
+                  if (s.src) {
+                    newScript.src = s.src;
+                  } else {
+                    newScript.textContent = s.textContent;
+                  }
+                  newScript.async = false;
+                  document.body.appendChild(newScript);
+                  console.log('[Inline Script]', idx + 1, '✓');
+                } catch(e) {
+                  console.error('[Inline Script]', idx + 1, '✗', e);
                 }
-                newScript.async = false;
-                document.body.appendChild(newScript);
               });
+              
+              console.log('[ACFH Bootstrap] ✓ Página carregada completamente!');
             } catch (e) {
-              console.error('Erro ao processar página:', e);
+              console.error('[ACFH Bootstrap] Erro ao processar página:', e);
             }
+          } else {
+            console.error('[ACFH Bootstrap] Erro HTTP:', xhr.status);
           }
         };
+        
         xhr.onerror = function() {
-          console.error('Erro ao carregar página HTML');
+          console.error('[ACFH Bootstrap] Erro ao carregar página HTML');
         };
+        
         xhr.send();
 
         try { window.dispatchEvent(new Event('acfh:bootstrap:loaded')); } catch (e) {}
