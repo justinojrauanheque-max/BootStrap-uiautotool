@@ -987,7 +987,7 @@ let isRenderingClickFillConfig = false;
 
         const setTextBySelector = (selector, text) => {
             const el = document.querySelector(selector);
-            if (el) el.textContent = tr(text, text);
+            if (el) el.textContent = getI18nText(text);
         };
         setTextBySelector('[data-tm-menu="file"] .tm-menu-trigger', 'File');
         setTextBySelector('[data-tm-menu="edit"] .tm-menu-trigger', 'Edit');
