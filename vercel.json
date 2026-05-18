@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/index.html",
+      "destination": "https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/index.html"
+    },
+    {
+      "source": "/options.html",
+      "destination": "https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/options.html"
+    },
+    {
+      "source": "/",
+      "destination": "https://bfjhgisfzdsefjjojbov.supabase.co/storage/v1/object/public/web/index.html"
+    }
+  ]
+}
