@@ -244,6 +244,239 @@ body:has(.landing) .site-footer {
     }
 }
 
+/* Deployment tail override: this block intentionally stays last. */
+html:has(.landing),
+body:has(.landing) {
+    height: 100%;
+    overflow: hidden !important;
+}
+
+.landing {
+    height: calc(100vh - 58px) !important;
+    min-height: calc(100vh - 58px) !important;
+    overflow: hidden !important;
+}
+
+.landing-section.docs-section,
+.landing-section.test-section,
+.landing-section.privacy-section {
+    height: calc(100vh - 58px) !important;
+    max-height: calc(100vh - 58px) !important;
+    overflow: hidden !important;
+    padding-top: 56px !important;
+    padding-bottom: 20px !important;
+}
+
+.docs-layout,
+.test-layout,
+.privacy-layout {
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+}
+
+.docs-content,
+.test-content,
+.privacy-content {
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    overflow-y: scroll !important;
+    overflow-x: hidden !important;
+    overscroll-behavior: contain !important;
+    padding-bottom: 90px !important;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(125, 161, 211, 0.78) rgba(15, 23, 42, 0.38);
+}
+
+.docs-content::-webkit-scrollbar,
+.test-content::-webkit-scrollbar,
+.privacy-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.docs-content::-webkit-scrollbar-track,
+.test-content::-webkit-scrollbar-track,
+.privacy-content::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.38);
+}
+
+.docs-content::-webkit-scrollbar-thumb,
+.test-content::-webkit-scrollbar-thumb,
+.privacy-content::-webkit-scrollbar-thumb {
+    background: rgba(125, 161, 211, 0.78);
+    border-radius: 999px;
+}
+
+#baixar .config-content,
+.config-content {
+    grid-template-columns: 340px minmax(0, 1fr) 430px !important;
+}
+
+.config-sidebar {
+    width: 340px !important;
+    min-width: 340px !important;
+}
+
+@media (min-width: 1500px) {
+    #baixar .config-content,
+    .config-content {
+        grid-template-columns: 350px minmax(0, 1fr) 450px !important;
+    }
+
+    .config-sidebar {
+        width: 350px !important;
+        min-width: 350px !important;
+    }
+}
+
+/* Absolute final layout locks: keep only the middle public content scrollable. */
+html:has(.landing),
+body:has(.landing) {
+    height: 100%;
+    overflow: hidden !important;
+}
+
+.landing {
+    height: calc(100vh - 58px) !important;
+    min-height: calc(100vh - 58px) !important;
+    overflow: hidden !important;
+}
+
+.landing-section.docs-section,
+.landing-section.test-section,
+.landing-section.privacy-section {
+    height: calc(100vh - 58px) !important;
+    max-height: calc(100vh - 58px) !important;
+    overflow: hidden !important;
+    padding-top: 56px !important;
+    padding-bottom: 20px !important;
+}
+
+.docs-layout,
+.test-layout,
+.privacy-layout {
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+}
+
+.docs-content,
+.test-content,
+.privacy-content {
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    overflow-y: scroll !important;
+    overflow-x: hidden !important;
+    overscroll-behavior: contain !important;
+    padding-bottom: 90px !important;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(125, 161, 211, 0.78) rgba(15, 23, 42, 0.38);
+}
+
+.docs-content::-webkit-scrollbar,
+.test-content::-webkit-scrollbar,
+.privacy-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.docs-content::-webkit-scrollbar-track,
+.test-content::-webkit-scrollbar-track,
+.privacy-content::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.38);
+}
+
+.docs-content::-webkit-scrollbar-thumb,
+.test-content::-webkit-scrollbar-thumb,
+.privacy-content::-webkit-scrollbar-thumb {
+    background: rgba(125, 161, 211, 0.78);
+    border-radius: 999px;
+}
+
+#baixar .config-content,
+.config-content {
+    grid-template-columns: 340px minmax(0, 1fr) 430px !important;
+}
+
+.config-sidebar {
+    width: 340px !important;
+    min-width: 340px !important;
+}
+
+@media (min-width: 1500px) {
+    #baixar .config-content,
+    .config-content {
+        grid-template-columns: 350px minmax(0, 1fr) 450px !important;
+    }
+
+    .config-sidebar {
+        width: 350px !important;
+        min-width: 350px !important;
+    }
+}
+
+/* Final override: keep the page body locked and make the middle article pane
+   the only vertical scroller in Docs/Test/Privacy. */
+html:has(.landing),
+body:has(.landing) {
+    height: 100%;
+    overflow: hidden !important;
+}
+
+.landing {
+    height: calc(100vh - 58px) !important;
+    overflow: hidden !important;
+}
+
+.landing-section.docs-section,
+.landing-section.test-section,
+.landing-section.privacy-section {
+    height: calc(100vh - 58px) !important;
+    max-height: calc(100vh - 58px) !important;
+    overflow: hidden !important;
+    padding-top: 56px !important;
+    padding-bottom: 20px !important;
+}
+
+.docs-layout,
+.test-layout,
+.privacy-layout {
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+}
+
+.docs-content,
+.test-content,
+.privacy-content {
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    overflow-y: scroll !important;
+    overflow-x: hidden !important;
+    overscroll-behavior: contain !important;
+    padding-bottom: 72px !important;
+}
+
+#baixar .config-content {
+    grid-template-columns: 330px minmax(0, 1fr) 410px !important;
+}
+
+.config-sidebar {
+    width: 330px !important;
+    min-width: 330px !important;
+}
+
+@media (min-width: 1500px) {
+    #baixar .config-content {
+        grid-template-columns: 340px minmax(0, 1fr) 430px !important;
+    }
+}
+
 /* Final layout locks for the docs/test/privacy workspace. The browser page
    stays fixed; only the center reading pane scrolls. */
 body:has(.landing) {
@@ -8466,5 +8699,92 @@ body {
     .test-topic-list,
     .privacy-topic-list {
         max-height: 260px;
+    }
+}
+
+/* Deployment tail override: this block intentionally stays last. */
+html:has(.landing),
+body:has(.landing) {
+    height: 100%;
+    overflow: hidden !important;
+}
+
+.landing {
+    height: calc(100vh - 58px) !important;
+    min-height: calc(100vh - 58px) !important;
+    overflow: hidden !important;
+}
+
+.landing-section.docs-section,
+.landing-section.test-section,
+.landing-section.privacy-section {
+    height: calc(100vh - 58px) !important;
+    max-height: calc(100vh - 58px) !important;
+    overflow: hidden !important;
+    padding-top: 56px !important;
+    padding-bottom: 20px !important;
+}
+
+.docs-layout,
+.test-layout,
+.privacy-layout {
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+}
+
+.docs-content,
+.test-content,
+.privacy-content {
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    overflow-y: scroll !important;
+    overflow-x: hidden !important;
+    overscroll-behavior: contain !important;
+    padding-bottom: 90px !important;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(125, 161, 211, 0.78) rgba(15, 23, 42, 0.38);
+}
+
+.docs-content::-webkit-scrollbar,
+.test-content::-webkit-scrollbar,
+.privacy-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.docs-content::-webkit-scrollbar-track,
+.test-content::-webkit-scrollbar-track,
+.privacy-content::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.38);
+}
+
+.docs-content::-webkit-scrollbar-thumb,
+.test-content::-webkit-scrollbar-thumb,
+.privacy-content::-webkit-scrollbar-thumb {
+    background: rgba(125, 161, 211, 0.78);
+    border-radius: 999px;
+}
+
+#baixar .config-content,
+.config-content {
+    grid-template-columns: 340px minmax(0, 1fr) 430px !important;
+}
+
+.config-sidebar {
+    width: 340px !important;
+    min-width: 340px !important;
+}
+
+@media (min-width: 1500px) {
+    #baixar .config-content,
+    .config-content {
+        grid-template-columns: 350px minmax(0, 1fr) 450px !important;
+    }
+
+    .config-sidebar {
+        width: 350px !important;
+        min-width: 350px !important;
     }
 }

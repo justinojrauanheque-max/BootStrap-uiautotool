@@ -1030,6 +1030,22 @@ let isRenderingClickFillConfig = false;
             ['#userScriptInjectionTiming option[value="reload"]', 'On next page load'],
             ['#userScriptInjectionTiming option[value="live"]', 'Apply to current matching tabs']
         ].forEach(([selector, key]) => setTextBySelector(selector, key));
+        const setAttrBySelector = (selector, attr, text) => {
+            document.querySelectorAll(selector).forEach((el) => {
+                el.setAttribute(attr, getI18nText(text));
+            });
+        };
+        setAttrBySelector('.session-config-delete, .item-delete, .delete-btn', 'title', 'Delete');
+        setAttrBySelector('.session-config-delete, .item-delete, .delete-btn', 'aria-label', 'Delete');
+        setAttrBySelector('#importConfigIconBtn', 'title', activeOptionsSession === 'userscript'
+            ? 'Import UserScript'
+            : (activeOptionsSession === 'ocr' ? 'Import OCR captures' : 'Import configuration'));
+        setAttrBySelector('#exportConfigIconBtn', 'title', activeOptionsSession === 'userscript'
+            ? 'Export UserScript'
+            : (activeOptionsSession === 'ocr' ? 'Export OCR captures' : 'Export configuration'));
+        setAttrBySelector('[data-session-expand="click-fill"]', 'title', 'Show configurations');
+        setAttrBySelector('[data-session-expand="ocr"]', 'title', 'Show OCR captures');
+        setAttrBySelector('[data-session-expand="userscript"]', 'title', 'Show scripts');
         // Atualiza o badge de status da extensão com o texto correto no idioma atual
         updateExtensionStatus();
 
@@ -4097,9 +4113,10 @@ function setUserScriptEditorExpanded(expanded, options = {}) {
 function initUserScriptEditorExpansion() {
     if (!userscriptExpandToggle) return;
 
-    let storedExpanded = false;
+    let storedExpanded = true;
     try {
-        storedExpanded = localStorage.getItem('acfhUserscriptEditorExpanded') === '1';
+        const savedExpanded = localStorage.getItem('acfhUserscriptEditorExpanded');
+        storedExpanded = savedExpanded === null ? true : (savedExpanded === '1' || savedExpanded === 'true');
     } catch (e) {
         // ignore
     }
@@ -4564,10 +4581,10 @@ function setOptionsSession(nextSession, options = {}) {
     }
 
     if (importConfigIconBtn) {
-        importConfigIconBtn.title = session === 'userscript' ? 'Import UserScript' : (session === 'ocr' ? 'Import OCR captures' : 'Import configuration');
+        importConfigIconBtn.title = getI18nText(session === 'userscript' ? 'Import UserScript' : (session === 'ocr' ? 'Import OCR captures' : 'Import configuration'));
     }
     if (exportConfigIconBtn) {
-        exportConfigIconBtn.title = session === 'userscript' ? 'Export UserScript' : (session === 'ocr' ? 'Export OCR captures' : 'Export configuration');
+        exportConfigIconBtn.title = getI18nText(session === 'userscript' ? 'Export UserScript' : (session === 'ocr' ? 'Export OCR captures' : 'Export configuration'));
     }
     if (configColorIconBtn) {
         configColorIconBtn.title = session === 'ocr'
@@ -5933,8 +5950,8 @@ function aplicarDadosConfiguracao(config) {
             const deleteButton = document.createElement('button');
             deleteButton.type = 'button';
             deleteButton.className = 'ocr-rule-btn danger';
-            deleteButton.title = 'Delete action';
-            deleteButton.setAttribute('aria-label', 'Delete action');
+            deleteButton.title = getI18nText('Delete action');
+            deleteButton.setAttribute('aria-label', getI18nText('Delete action'));
             deleteButton.innerHTML = `
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M3 6h18"></path>

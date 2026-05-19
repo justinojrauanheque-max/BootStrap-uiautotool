@@ -45,7 +45,10 @@
         // Sincroniza também o estado global da extensão para que a página
         // de opções web consiga exibir corretamente se a automação está
         // habilitada ou desabilitada (popup ON/OFF).
-        'autoClickerEnabled'
+        'autoClickerEnabled',
+        'userScriptEditorEnabled',
+        'acfhUserscriptEditorExpanded',
+        'acfhFreshInstallAt'
     ];
 
     // Prefixos de chaves adicionais que também devem ser espelhadas
@@ -61,6 +64,17 @@
     const BRIDGE_MESSAGE_TYPE = 'acfh-storage-update';
     const RUNTIME_COMMAND_TYPE = 'acfh-runtime-command';
     const PING_MESSAGE_TYPE = 'acfh-ping';
+    const RESET_ON_FRESH_INSTALL_KEYS = [
+        'configurations',
+        'activeConfigId',
+        'autoClickConfig',
+        'ocrRules',
+        'ocrSettings',
+        'independentUserScript',
+        'independentUserScriptLastEdited',
+        'userScripts',
+        'activeUserScriptId'
+    ];
 
     // Flag interna: se o contexto da extensão for invalidado (por exemplo,
     // extensão removida/atualizada enquanto a página web continua aberta),
@@ -103,6 +117,31 @@
         return filtered;
     }
 
+    function clearWebAutomationStateForFreshInstall(installMarker) {
+        if (!installMarker) return;
+        const lastApplied = localStorage.getItem('acfhFreshInstallAppliedAt');
+        if (String(lastApplied || '') === String(installMarker)) return;
+        RESET_ON_FRESH_INSTALL_KEYS.forEach((key) => {
+            try {
+                localStorage.removeItem(key);
+            } catch (e) {
+                // ignore
+            }
+        });
+        try {
+            Object.keys(localStorage).forEach((key) => {
+                if (SYNC_PREFIXES.some(prefix => key.startsWith(prefix))) {
+                    localStorage.removeItem(key);
+                }
+            });
+            localStorage.setItem('userScriptEditorEnabled', JSON.stringify(false));
+            localStorage.setItem('acfhUserscriptEditorExpanded', JSON.stringify(true));
+            localStorage.setItem('acfhFreshInstallAppliedAt', String(installMarker));
+        } catch (e) {
+            // ignore
+        }
+    }
+
     function syncFromChromeToLocal() {
         try {
             // Carrega todas as chaves e, em seguida, filtra apenas as
@@ -117,6 +156,7 @@
                     return;
                 }
 
+                clearWebAutomationStateForFreshInstall(data.acfhFreshInstallAt);
                 const filteredChanges = {};
                 Object.keys(data).forEach((key) => {
                     if (!keyIsSyncable(key)) {

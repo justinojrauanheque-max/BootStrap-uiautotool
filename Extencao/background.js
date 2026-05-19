@@ -354,7 +354,22 @@ function updateContextMenuPatternsFromConfigs() {
     });
 }
 
-chrome.runtime.onInstalled.addListener(() => {
+chrome.runtime.onInstalled.addListener((details) => {
+    if (details && details.reason === 'install') {
+        chrome.storage.local.clear(() => {
+            chrome.storage.local.set({
+                autoClickerEnabled: false,
+                activeAutomationMode: ACTIVE_AUTOMATION_MODE_CLICK_FILL,
+                userScriptEditorEnabled: false,
+                acfhUserscriptEditorExpanded: true,
+                acfhFreshInstallAt: Date.now()
+            }, () => {
+                updateContextMenuPatternsFromConfigs();
+                primeSelectorCaptureForOpenTabs();
+            });
+        });
+        return;
+    }
     updateContextMenuPatternsFromConfigs();
     primeSelectorCaptureForOpenTabs();
 });
@@ -1745,7 +1760,11 @@ function startOcrCapture(defaults, explicitTargetUrl, sendResponse) {
 }
 
 function runWhenOcrModeActive(sendResponse, callback) {
-    chrome.storage.local.get(['activeAutomationMode'], (data) => {
+    chrome.storage.local.get(['activeAutomationMode', 'autoClickerEnabled'], (data) => {
+        if (!data.autoClickerEnabled) {
+            respondToRuntime(sendResponse, { success: false, error: 'The extension is disabled. Enable it to run OCR.' });
+            return;
+        }
         if (normalizeActiveAutomationMode(data.activeAutomationMode) !== ACTIVE_AUTOMATION_MODE_OCR) {
             respondToRuntime(sendResponse, { success: false, error: 'OCR session is not active.' });
             return;
@@ -2720,4 +2739,3 @@ function generateScriptContent(config) {
     scriptContent += `})();`;
     return scriptContent;
     }
-

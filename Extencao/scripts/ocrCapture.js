@@ -41,6 +41,42 @@
         ).trim().replace(/\s+/g, ' ').slice(0, 160);
     }
 
+    function readableTextFromRect(rect, fallbackTarget) {
+        const pieces = [];
+        const seen = new Set();
+        const width = Math.max(1, rect.width || 1);
+        const height = Math.max(1, rect.height || 1);
+        const sampleX = Math.min(6, Math.max(2, Math.ceil(width / 120)));
+        const sampleY = Math.min(6, Math.max(2, Math.ceil(height / 80)));
+
+        for (let y = 0; y <= sampleY; y++) {
+            for (let x = 0; x <= sampleX; x++) {
+                const px = rect.left + (width * x / sampleX);
+                const py = rect.top + (height * y / sampleY);
+                const element = document.elementFromPoint(px, py);
+                if (!element) continue;
+                const candidates = [element, element.closest('input,textarea,button,a,label,[role],p,span,div,td,th,li,h1,h2,h3,h4,h5,h6')].filter(Boolean);
+                candidates.forEach((candidate) => {
+                    if (seen.has(candidate)) return;
+                    seen.add(candidate);
+                    const text = readableText(candidate);
+                    if (text && !pieces.includes(text)) pieces.push(text);
+                });
+            }
+        }
+
+        const selected = String(window.getSelection && window.getSelection() || '').trim().replace(/\s+/g, ' ');
+        if (selected && !pieces.includes(selected)) {
+            pieces.unshift(selected);
+        }
+
+        if (!pieces.length) {
+            const fallback = readableText(fallbackTarget);
+            if (fallback) pieces.push(fallback);
+        }
+        return pieces.join('\n').slice(0, 5000);
+    }
+
     function showFillValueBox(initialValue = '') {
         return new Promise((resolve) => {
             const shell = document.createElement('div');
@@ -177,12 +213,13 @@
                     height: targetRect ? targetRect.height : 1
                 }
                 : { left, top, width, height };
+            const rectText = readableTextFromRect(captureRect, target);
             const capture = {
                 url: location.href,
                 title: document.title,
                 rect: captureRect,
-                matchText: readableText(target),
-                capturedText: readableText(target),
+                matchText: readableText(target) || rectText,
+                capturedText: rectText || readableText(target),
                 selectorHint: cssPath(target),
                 role: target ? (target.getAttribute('role') || target.getAttribute('type') || '') : '',
                 tagName: target ? target.tagName.toLowerCase() : ''
@@ -192,6 +229,11 @@
                 const fillValue = await showFillValueBox(defaults.fillValue || readableText(target));
                 if (fillValue === null) return;
                 capture.fillValue = fillValue;
+            }
+
+            if (defaults.textOnly === true || defaults.noCreateAction === true) {
+                showCapturedTextPanel(capture.capturedText || capture.matchText || '');
+                return;
             }
 
             chrome.runtime.sendMessage({ action: 'ocrCaptureComplete', capture });
@@ -206,6 +248,80 @@
         document.body.appendChild(overlay);
         overlay.tabIndex = -1;
         overlay.focus();
+    }
+
+    function showCapturedTextPanel(text) {
+        const existing = document.getElementById('acfh-ocr-text-panel');
+        if (existing) existing.remove();
+
+        const shell = document.createElement('div');
+        shell.id = 'acfh-ocr-text-panel';
+        shell.style.cssText = [
+            'position:fixed',
+            'right:18px',
+            'bottom:18px',
+            'z-index:2147483647',
+            'width:min(520px,calc(100vw - 36px))',
+            'padding:14px',
+            'border:1px solid rgba(56,189,248,.45)',
+            'border-radius:10px',
+            'background:rgba(15,23,42,.98)',
+            'box-shadow:0 24px 70px rgba(0,0,0,.48)',
+            'color:#e5e7eb',
+            'font-family:Segoe UI,Arial,sans-serif'
+        ].join(';');
+
+        const title = document.createElement('strong');
+        title.textContent = 'Captured text';
+        title.style.cssText = 'display:block;margin:0 0 10px;font-size:14px';
+
+        const textarea = document.createElement('textarea');
+        textarea.value = text || 'No text found.';
+        textarea.readOnly = true;
+        textarea.style.cssText = [
+            'width:100%',
+            'height:160px',
+            'resize:vertical',
+            'box-sizing:border-box',
+            'border:1px solid rgba(148,163,184,.35)',
+            'border-radius:8px',
+            'background:#020617',
+            'color:#f8fafc',
+            'padding:10px',
+            'font:13px/1.5 Consolas,monospace'
+        ].join(';');
+
+        const actions = document.createElement('div');
+        actions.style.cssText = 'display:flex;justify-content:flex-end;gap:8px;margin-top:10px';
+
+        const copy = document.createElement('button');
+        copy.type = 'button';
+        copy.textContent = 'Copy';
+        copy.style.cssText = 'min-height:36px;border:0;border-radius:8px;background:#2563eb;color:white;padding:0 14px;font-weight:700;cursor:pointer';
+
+        const close = document.createElement('button');
+        close.type = 'button';
+        close.textContent = 'Close';
+        close.style.cssText = 'min-height:36px;border:1px solid rgba(148,163,184,.35);border-radius:8px;background:#111827;color:#e5e7eb;padding:0 14px;cursor:pointer';
+
+        copy.addEventListener('click', async () => {
+            textarea.focus();
+            textarea.select();
+            try {
+                await navigator.clipboard.writeText(textarea.value);
+                copy.textContent = 'Copied';
+            } catch (e) {
+                document.execCommand('copy');
+                copy.textContent = 'Copied';
+            }
+        });
+        close.addEventListener('click', () => shell.remove());
+
+        actions.append(copy, close);
+        shell.append(title, textarea, actions);
+        document.body.appendChild(shell);
+        textarea.focus();
+        textarea.select();
     }
 
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {

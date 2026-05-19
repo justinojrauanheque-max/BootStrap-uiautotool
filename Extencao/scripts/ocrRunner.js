@@ -22,6 +22,7 @@
     let floatPlayButton = null;
     let floatStopButton = null;
     let nextRuleIndex = 0;
+    let selectedCaptureAction = 'click';
     let playbackState = {
         running: false,
         paused: false,
@@ -32,10 +33,10 @@
     };
     let ocrLang = 'en';
     const ocrText = {
-        en: { ready: 'Ready', disabled: 'Disabled', stopped: 'Stopped', noActions: 'No OCR actions', noTarget: 'No target', actionSent: 'Action sent', runSent: 'Run sent', preview: 'Preview', noMatch: 'No match', deleted: 'Deleted', deleteFailed: 'Delete failed', noAction: 'No action', waiting: 'Waiting' },
-        pt: { ready: 'Pronto', disabled: 'Desativado', stopped: 'Parado', noActions: 'Sem acoes OCR', noTarget: 'Sem alvo', actionSent: 'Acao enviada', runSent: 'Execucao enviada', preview: 'Previa', noMatch: 'Sem correspondencia', deleted: 'Excluido', deleteFailed: 'Falha ao excluir', noAction: 'Sem acao', waiting: 'Aguardando' },
-        es: { ready: 'Listo', disabled: 'Desactivado', stopped: 'Detenido', noActions: 'Sin acciones OCR', noTarget: 'Sin objetivo', actionSent: 'Accion enviada', runSent: 'Ejecucion enviada', preview: 'Vista previa', noMatch: 'Sin coincidencia', deleted: 'Eliminado', deleteFailed: 'Error al eliminar', noAction: 'Sin accion', waiting: 'Esperando' },
-        fr: { ready: 'Pret', disabled: 'Desactive', stopped: 'Arrete', noActions: 'Aucune action OCR', noTarget: 'Aucune cible', actionSent: 'Action envoyee', runSent: 'Execution envoyee', preview: 'Apercu', noMatch: 'Aucune correspondance', deleted: 'Supprime', deleteFailed: 'Echec suppression', noAction: 'Aucune action', waiting: 'Attente' }
+        en: { ready: 'Ready', disabled: 'Disabled', stopped: 'Stopped', noActions: 'No OCR actions', noTarget: 'No target', actionSent: 'Action sent', runSent: 'Run sent', preview: 'Preview', noMatch: 'No match', deleted: 'Deleted', deleteFailed: 'Delete failed', noAction: 'No action', waiting: 'Waiting', captureMode: 'Capture mode', captureText: 'Capture text', click: 'Click', doubleClick: 'Double click', scroll: 'Scroll', fill: 'Fill', check: 'Check / switch' },
+        pt: { ready: 'Pronto', disabled: 'Desativado', stopped: 'Parado', noActions: 'Sem acoes OCR', noTarget: 'Sem alvo', actionSent: 'Acao enviada', runSent: 'Execucao enviada', preview: 'Previa', noMatch: 'Sem correspondencia', deleted: 'Excluido', deleteFailed: 'Falha ao excluir', noAction: 'Sem acao', waiting: 'Aguardando', captureMode: 'Modo de captura', captureText: 'Capturar texto', click: 'Clique', doubleClick: 'Clique duplo', scroll: 'Scroll', fill: 'Preencher', check: 'Marcar / alternar' },
+        es: { ready: 'Listo', disabled: 'Desactivado', stopped: 'Detenido', noActions: 'Sin acciones OCR', noTarget: 'Sin objetivo', actionSent: 'Accion enviada', runSent: 'Ejecucion enviada', preview: 'Vista previa', noMatch: 'Sin coincidencia', deleted: 'Eliminado', deleteFailed: 'Error al eliminar', noAction: 'Sin accion', waiting: 'Esperando', captureMode: 'Modo de captura', captureText: 'Capturar texto', click: 'Clic', doubleClick: 'Doble clic', scroll: 'Desplazar', fill: 'Rellenar', check: 'Marcar / cambiar' },
+        fr: { ready: 'Pret', disabled: 'Desactive', stopped: 'Arrete', noActions: 'Aucune action OCR', noTarget: 'Aucune cible', actionSent: 'Action envoyee', runSent: 'Execution envoyee', preview: 'Apercu', noMatch: 'Aucune correspondance', deleted: 'Supprime', deleteFailed: 'Echec suppression', noAction: 'Aucune action', waiting: 'Attente', captureMode: 'Mode capture', captureText: 'Capturer texte', click: 'Clic', doubleClick: 'Double clic', scroll: 'Defiler', fill: 'Remplir', check: 'Cocher / basculer' }
     };
 
     function setOcrLanguage(lang) {
@@ -458,6 +459,28 @@
         return startSequentialPlayback(ruleId);
     }
 
+    function refreshEnabledThen(callback) {
+        if (!chrome || !chrome.storage || !chrome.storage.local) {
+            callback();
+            return;
+        }
+        chrome.storage.local.get(['autoClickerEnabled', 'activeAutomationMode', 'uiLanguage'], (data) => {
+            if (chrome.runtime && chrome.runtime.lastError) {
+                callback();
+                return;
+            }
+            setOcrLanguage(data.uiLanguage || ocrLang);
+            autoClickerEnabled = !!data.autoClickerEnabled;
+            activeMode = data.activeAutomationMode || activeMode;
+            if (!autoClickerEnabled) {
+                setFloatStatus(txt('disabled'));
+                updateFloatRunState();
+                return;
+            }
+            callback();
+        });
+    }
+
     function runRulesOnce(ruleId = null) {
         const rules = runnableRules(ruleId);
         if (!rules.length) {
@@ -603,9 +626,46 @@
             }
             .acfh-ocr-float-btn:hover { background: #1d4ed8; }
             .acfh-ocr-float-btn.capture { background: #0f766e; }
-            .acfh-ocr-float-btn.stop.active,
             .acfh-ocr-float-btn.play.active { background: #991b1b; }
+            .acfh-ocr-float-btn.stop.active { background: #991b1b; }
             .acfh-ocr-float-btn.danger { background: #991b1b; }
+            .acfh-ocr-capture-wrap { position: relative; display: inline-flex; align-items: stretch; gap: 2px; }
+            .acfh-ocr-float-btn.capture-mode {
+                width: 22px;
+                min-width: 22px;
+                font-size: 18px;
+                font-weight: 800;
+                line-height: 1;
+                background: #3f3f46;
+            }
+            .acfh-ocr-capture-menu {
+                position: absolute;
+                right: 0;
+                bottom: calc(100% + 8px);
+                min-width: 170px;
+                padding: 6px;
+                border: 1px solid rgba(148,163,184,.32);
+                border-radius: 8px;
+                background: #111827;
+                box-shadow: 0 18px 45px rgba(0,0,0,.42);
+                display: none;
+            }
+            .acfh-ocr-capture-wrap.open .acfh-ocr-capture-menu { display: grid; gap: 3px; }
+            .acfh-ocr-capture-option {
+                border: 0;
+                border-radius: 6px;
+                background: transparent;
+                color: #e5e7eb;
+                min-height: 30px;
+                padding: 0 9px;
+                text-align: left;
+                cursor: pointer;
+            }
+            .acfh-ocr-capture-option:hover,
+            .acfh-ocr-capture-option.active {
+                background: #1d4ed8;
+                color: #fff;
+            }
             .acfh-ocr-float-btn svg {
                 width: 17px;
                 height: 17px;
@@ -639,16 +699,64 @@
             trash: '<svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path></svg>'
         };
 
+        const captureModes = [
+            ['click', 'click'],
+            ['doubleClick', 'doubleClick'],
+            ['scroll', 'scroll'],
+            ['fill', 'fill'],
+            ['check', 'check'],
+            ['captureText', 'captureText']
+        ];
+
+        const captureWrap = document.createElement('div');
+        captureWrap.className = 'acfh-ocr-capture-wrap';
+
+        const captureModeButton = makeIconButton(txt('captureMode'), '&lt;', () => {
+            captureWrap.classList.toggle('open');
+        }, 'capture-mode');
+
+        const captureMenu = document.createElement('div');
+        captureMenu.className = 'acfh-ocr-capture-menu';
+        const renderCaptureMenu = () => {
+            captureMenu.innerHTML = '';
+            captureModes.forEach(([value, labelKey]) => {
+                const item = document.createElement('button');
+                item.type = 'button';
+                item.className = `acfh-ocr-capture-option${selectedCaptureAction === value ? ' active' : ''}`;
+                item.textContent = txt(labelKey);
+                item.addEventListener('click', () => {
+                    selectedCaptureAction = value;
+                    captureWrap.classList.remove('open');
+                    setFloatStatus(txt(labelKey));
+                    renderCaptureMenu();
+                });
+                captureMenu.appendChild(item);
+            });
+        };
+        renderCaptureMenu();
+
         const captureButton = makeIconButton('Capture', icons.capture, () => {
-            chrome.runtime.sendMessage({ action: 'startOcrCapture', targetUrl: settingsState.url, defaults: firstRuleDefaults() }, () => {});
+            refreshEnabledThen(() => {
+                const defaults = firstRuleDefaults(selectedCaptureAction);
+                if (selectedCaptureAction === 'captureText') {
+                    defaults.textOnly = true;
+                    defaults.noCreateAction = true;
+                }
+                chrome.runtime.sendMessage({ action: 'startOcrCapture', targetUrl: settingsState.url, defaults }, () => {});
+            });
         }, 'capture');
-        floatPlayButton = makeIconButton('Play', icons.play, () => toggleSequentialPlayback(), 'play');
-        const nextButton = makeIconButton('Next', icons.next, () => runNextRule());
-        const previewButton = makeIconButton('Preview', icons.eye, () => previewRule());
+        captureWrap.append(captureModeButton, captureButton, captureMenu);
+        document.addEventListener('click', (event) => {
+            if (!captureWrap.contains(event.target)) captureWrap.classList.remove('open');
+        }, { capture: true });
+
+        floatPlayButton = makeIconButton('Play', icons.play, () => refreshEnabledThen(() => toggleSequentialPlayback()), 'play');
+        const nextButton = makeIconButton('Next', icons.next, () => refreshEnabledThen(() => runNextRule()));
+        const previewButton = makeIconButton('Preview', icons.eye, () => refreshEnabledThen(() => previewRule()));
         floatStopButton = makeIconButton('Stop', icons.stop, () => stopOcr(), 'stop');
         const deleteButton = makeIconButton('Delete action', icons.trash, () => deleteCurrentRule(), 'danger');
 
-        floatBox.append(floatStatus, captureButton, floatPlayButton, nextButton, previewButton, floatStopButton, deleteButton);
+        floatBox.append(floatStatus, captureWrap, floatPlayButton, nextButton, previewButton, floatStopButton, deleteButton);
         document.body.appendChild(floatBox);
         updateFloatRunState();
     }
@@ -668,9 +776,9 @@
         if (floatStatus) floatStatus.textContent = text || 'OCR';
     }
 
-    function firstRuleDefaults() {
+    function firstRuleDefaults(action = 'click') {
         return {
-            action: 'click',
+            action,
             actionMode: 'default',
             scrollDirection: 'down',
             scrollAmount: 520,
