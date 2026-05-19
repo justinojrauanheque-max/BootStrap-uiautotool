@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const isChromeExtensionEnv = (typeof chrome !== 'undefined' &&
         chrome && chrome.storage && chrome.storage.local);
 
-    const EXTENSION_INSTALL_URL = 'https://chromewebstore.google.com/detail/jgkeppcdhlodchbjljdiajbieephocnb?utm_source=item-share-cb';
+    const EXTENSION_INSTALL_URL = 'https://chromewebstore.google.com/detail/auto-clicker-form-helper/jgkeppcdhlodchbjljdiajbieephocnb';
     const IS_LOCAL_OPTIONS_PAGE = ['localhost', '127.0.0.1'].includes(window.location.hostname);
     const ALLOW_STANDALONE_OPTIONS = false;
 

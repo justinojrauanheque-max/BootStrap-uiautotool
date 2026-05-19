@@ -754,6 +754,14 @@ html {
     margin: 18px 0 26px;
 }
 
+.landing-repo-note {
+    margin: -8px auto 26px;
+    max-width: 760px;
+    color: var(--text-medium);
+    font-size: 0.94rem;
+    line-height: 1.55;
+}
+
 .landing-btn {
     display: inline-flex;
     align-items: center;
