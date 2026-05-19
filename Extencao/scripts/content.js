@@ -156,7 +156,7 @@
     });
 
     // Função para preencher elementos
-    async function fillElementIfNeeded(element, fillValue, fillOption) {
+    async function fillElementIfNeeded(element, fillValue, fillOption, typeDelayMs = 80) {
         if (!element || !fillValue) {
             console.warn("[fillElementIfNeeded] Element or fill value missing.");
             return false;
@@ -178,6 +178,7 @@
                 element.textContent = '';
             }
 
+            const delay = Number.isFinite(Number(typeDelayMs)) ? Math.max(0, Number(typeDelayMs)) : 80;
             for (let i = 0; i < fillValue.length; i++) {
                 const char = fillValue[i];
                 if (isInputOrTextArea) {
@@ -191,7 +192,7 @@
                 element.dispatchEvent(new KeyboardEvent('keypress', { key: char, code: `Key${char.toUpperCase()}`, bubbles: true, composed: true }));
                 element.dispatchEvent(new KeyboardEvent('keyup', { key: char, code: `Key${char.toUpperCase()}`, bubbles: true, composed: true }));
 
-                await new Promise(resolve => setTimeout(resolve, 80));
+                await new Promise(resolve => setTimeout(resolve, delay));
             }
             element.dispatchEvent(new Event('change', { bubbles: true }));
             return true;
@@ -642,7 +643,15 @@
                     let actionTaken = false;
                     if (xpathConfig.entry.fillValue && xpathConfig.entry.fillValue.trim() !== '') {
                         xpathConfig.isTyping = true;
-                        const filled = await fillElementIfNeeded(el, xpathConfig.entry.fillValue, globalActionType);
+                        const entryFillOption = xpathConfig.entry.fillMethod === 'type'
+                            ? 'typeOption'
+                            : (xpathConfig.entry.fillMethod === 'paste' ? 'copyOption' : globalActionType);
+                        const filled = await fillElementIfNeeded(
+                            el,
+                            xpathConfig.entry.fillValue,
+                            entryFillOption,
+                            xpathConfig.entry.typingSpeedMs || xpathConfig.entry.typeDelayMs || 80
+                        );
                         xpathConfig.isTyping = false;
                         if (filled) {
                             actionTaken = true;
@@ -899,7 +908,15 @@
                 let actionTaken = false;
                 if (xpathConfig.entry.fillValue && xpathConfig.entry.fillValue.trim() !== '') {
                     xpathConfig.isTyping = true;
-                    const filled = await fillElementIfNeeded(el, xpathConfig.entry.fillValue, globalActionType);
+                    const entryFillOption = xpathConfig.entry.fillMethod === 'type'
+                        ? 'typeOption'
+                        : (xpathConfig.entry.fillMethod === 'paste' ? 'copyOption' : globalActionType);
+                    const filled = await fillElementIfNeeded(
+                        el,
+                        xpathConfig.entry.fillValue,
+                        entryFillOption,
+                        xpathConfig.entry.typingSpeedMs || xpathConfig.entry.typeDelayMs || 80
+                    );
                     xpathConfig.isTyping = false;
                     if (filled) {
                         actionTaken = true;

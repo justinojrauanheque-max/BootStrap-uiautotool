@@ -61,6 +61,47 @@ let currentContextMenuPatterns = []; // PadrÃµes de URL usados para limitar o 
 const injectedUserScriptDocuments = new Map();
 const pendingOcrCaptureDefaultsByTab = new Map();
 
+function updateActionBadge(isActive) {
+    if (!chrome.action || !chrome.action.setBadgeText) return;
+    try {
+        chrome.action.setBadgeBackgroundColor({ color: '#dc2626' });
+        if (chrome.action.setBadgeTextColor) {
+            chrome.action.setBadgeTextColor({ color: '#ffffff' });
+        }
+        chrome.action.setBadgeText({ text: isActive ? '•' : '' });
+    } catch (e) {
+        console.warn('Unable to update action badge:', e && e.message ? e.message : e);
+    }
+}
+
+function refreshRuntimeBadge() {
+    chrome.storage.local.get([
+        'autoClickerEnabled',
+        'activeAutomationMode',
+        'configurations',
+        'activeConfigId',
+        'ocrRules',
+        INDEPENDENT_USERSCRIPT_KEY
+    ], (data) => {
+        if (chrome.runtime.lastError || !data.autoClickerEnabled) {
+            updateActionBadge(false);
+            return;
+        }
+        const mode = normalizeActiveAutomationMode(data.activeAutomationMode);
+        let active = false;
+        if (mode === ACTIVE_AUTOMATION_MODE_USERSCRIPT) {
+            active = !!data[INDEPENDENT_USERSCRIPT_KEY];
+        } else if (mode === ACTIVE_AUTOMATION_MODE_OCR) {
+            active = Array.isArray(data.ocrRules) && data.ocrRules.some(rule => rule && !rule.disabled);
+        } else {
+            const config = (Array.isArray(data.configurations) ? data.configurations : [])
+                .find(item => item && item.id === data.activeConfigId);
+            active = !!(config && Array.isArray(config.actions) && config.actions.some(action => action && !action.disabled && action.elementFinder));
+        }
+        updateActionBadge(active);
+    });
+}
+
 function ocrPendingKey(tabId, frameId = 0) {
     return `${tabId}:${Number.isInteger(frameId) ? frameId : 0}`;
 }
@@ -140,6 +181,7 @@ function getOcrTargetUrlFromState(data = {}, explicitTargetUrl = '') {
 chrome.storage.local.get(['uiLanguage', 'acfhPreferredLanguage'], (data) => {
     setBackgroundTranslations(data.uiLanguage || data.acfhPreferredLanguage || 'en');
     updateContextMenuPatternsFromConfigs();
+    refreshRuntimeBadge();
 });
 
 // Atualizar idioma e padrÃµes do menu quando opÃ§Ãµes mudarem
@@ -159,6 +201,12 @@ chrome.storage.onChanged.addListener((changes, area) => {
     // Sempre que o estado ON/OFF mudar, o menu de contexto Ã© recalculado.
     // Mantemos o menu disponÃ­vel em qualquer site quando a extensÃ£o estÃ¡
     // ligada, para permitir criar/editar configuraÃ§Ãµes em qualquer URL.
+    if ('autoClickerEnabled' in changes || 'activeAutomationMode' in changes ||
+        'configurations' in changes || 'activeConfigId' in changes ||
+        'ocrRules' in changes || 'independentUserScript' in changes) {
+        refreshRuntimeBadge();
+    }
+
     if ('autoClickerEnabled' in changes || 'activeAutomationMode' in changes) {
         updateContextMenuPatternsFromConfigs();
         primeSelectorCaptureForOpenTabs();
@@ -431,6 +479,9 @@ function buildAutoClickConfigFromConfig(config) {
             interval: action.actionMode === 'mutationObserve' ? null : action.intervalMs,
             repetitions: action.actionMode === 'mutationObserve' ? null : action.repeat,
             fillValue: action.fillValue,
+            fillMethod: action.fillMethod || 'paste',
+            typeDelayMs: action.typingSpeedMs || action.typeDelayMs || '80',
+            typingSpeedMs: action.typingSpeedMs || action.typeDelayMs || '80',
             waitInitModal: action.actionInitWait,
             isCSSSelector: action.isCSSSelector || false,
             actionMode: action.actionMode || 'default'
@@ -1311,6 +1362,7 @@ function extractConfigFromScript(script, configId = null) {
                 repeat: repeat,
                 fillValue: action.value || '',
                 fillMethod: action.mode === 'fill' ? (action.fillMethod || 'paste') : 'paste',
+                typingSpeedMs: action.typingSpeedMs || action.typeDelayMs || '80',
                 actionInitWait: String(action.waitBefore / 1000 || 0),
                 disabled: action.disabled || false,
                 isCSSSelector: action.isCSS || false,
@@ -1792,7 +1844,7 @@ function runWhenOcrModeSelected(sendResponse, callback) {
 // ManipulaÃ§Ã£o de mensagens
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === 'startOcrCapture') {
-        runWhenOcrModeSelected(sendResponse, () => {
+        runWhenOcrModeActive(sendResponse, () => {
             startOcrCapture(message.defaults || {}, message.targetUrl || '', sendResponse);
         });
         return true;
@@ -2074,6 +2126,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             // apenas garantimos que nenhum novo menu de contexto fique
             // visível.
             createOrUpdateContextMenu(false);
+            updateActionBadge(false);
             deactivateInjectedUserScriptsInOpenTabs(() => {
                 unregisterNativeIndependentUserScripts();
             });
@@ -2152,6 +2205,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             
             updateContextMenuPatternsFromConfigs();
             primeSelectorCaptureForOpenTabs();
+            refreshRuntimeBadge();
             console.log("Toggle ativado; propagando configuração para abas correspondentes.");
         }
     } else if (message.action === "activeAutomationModeChanged") {
@@ -2215,35 +2269,43 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             return;
         }
 
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            const tab = tabs && tabs[0];
-            if (!tab || !tab.id || !tab.url) {
-                sendResponse({ success: false, error: "No active tab found." });
+        chrome.storage.local.get(['autoClickerEnabled', 'activeAutomationMode'], (state) => {
+            if (!state.autoClickerEnabled || normalizeActiveAutomationMode(state.activeAutomationMode) !== ACTIVE_AUTOMATION_MODE_USERSCRIPT) {
+                sendResponse({ success: false, error: "Enable the extension and select UserScript before injecting." });
                 return;
             }
 
-            if (tab.url.startsWith("chrome://") || tab.url.startsWith("chrome-extension://")) {
-                sendResponse({ success: false, error: "Cannot execute on this browser page." });
-                return;
-            }
+            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                const tab = tabs && tabs[0];
+                if (!tab || !tab.id || !tab.url) {
+                    sendResponse({ success: false, error: "No active tab found." });
+                    return;
+                }
 
-            if (!urlMatchesUserScript(tab.url, scriptContent)) {
-                sendResponse({ success: false, error: "The active tab does not match this script @match." });
-                return;
-            }
+                if (tab.url.startsWith("chrome://") || tab.url.startsWith("chrome-extension://")) {
+                    sendResponse({ success: false, error: "Cannot execute on this browser page." });
+                    return;
+                }
 
-            injectIndependentUserScriptIntoTab(tab.id, tab.url, scriptContent, {
-                frameId: 0,
-                scriptId: message.scriptId || USERSCRIPT_DEFAULT_ID
-            }, { force: true })
-                .then((success) => {
-                    sendResponse(success
-                        ? { success: true }
-                        : { success: false, error: "Injection failed." });
-                })
-                .catch((e) => {
-                    sendResponse({ success: false, error: e && e.message ? e.message : String(e) });
-                });
+                if (!urlMatchesUserScript(tab.url, scriptContent)) {
+                    sendResponse({ success: false, error: "The active tab does not match this script @match." });
+                    return;
+                }
+
+                injectIndependentUserScriptIntoTab(tab.id, tab.url, scriptContent, {
+                    frameId: 0,
+                    scriptId: message.scriptId || USERSCRIPT_DEFAULT_ID
+                }, { force: true })
+                    .then((success) => {
+                        refreshRuntimeBadge();
+                        sendResponse(success
+                            ? { success: true }
+                            : { success: false, error: "Injection failed." });
+                    })
+                    .catch((e) => {
+                        sendResponse({ success: false, error: e && e.message ? e.message : String(e) });
+                    });
+            });
         });
         return true;
     } else if (message.action === "registerUserScript") {
@@ -2392,6 +2454,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
                         repeat: 1,
                         fillValue: "",
                         fillMethod: "paste",
+                        typingSpeedMs: "80",
                         actionInitWait: "0",
                         disabled: false,
                         isCSSSelector: isCSSMenu,
@@ -2475,8 +2538,8 @@ if (chrome.commands && chrome.commands.onCommand) {
         if (command !== 'start-ocr-capture') {
             return;
         }
-        chrome.storage.local.get([OCR_SETTINGS_KEY, 'ocrRules', 'activeAutomationMode'], (data) => {
-            if (normalizeActiveAutomationMode(data.activeAutomationMode) !== ACTIVE_AUTOMATION_MODE_OCR) {
+        chrome.storage.local.get([OCR_SETTINGS_KEY, 'ocrRules', 'activeAutomationMode', 'autoClickerEnabled'], (data) => {
+            if (!data.autoClickerEnabled || normalizeActiveAutomationMode(data.activeAutomationMode) !== ACTIVE_AUTOMATION_MODE_OCR) {
                 return;
             }
             const targetUrl = getOcrTargetUrlFromState(data);

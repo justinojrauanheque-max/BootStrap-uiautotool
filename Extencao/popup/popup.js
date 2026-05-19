@@ -183,6 +183,9 @@ document.addEventListener("DOMContentLoaded", () => {
                                     interval: action.intervalMs,
                                     repetitions: action.repeat,
                                     fillValue: action.fillValue,
+                                    fillMethod: action.fillMethod || 'paste',
+                                    typeDelayMs: action.typingSpeedMs || action.typeDelayMs || '80',
+                                    typingSpeedMs: action.typingSpeedMs || action.typeDelayMs || '80',
                                     waitInitModal: action.actionInitWait,
                                     isCSSSelector: action.isCSSSelector,
                                     actionMode: action.actionMode
@@ -243,6 +246,9 @@ document.addEventListener("DOMContentLoaded", () => {
                                     interval: action.intervalMs,
                                     repetitions: action.repeat,
                                     fillValue: action.fillValue,
+                                    fillMethod: action.fillMethod || 'paste',
+                                    typeDelayMs: action.typingSpeedMs || action.typeDelayMs || '80',
+                                    typingSpeedMs: action.typingSpeedMs || action.typeDelayMs || '80',
                                     waitInitModal: action.actionInitWait,
                                     isCSSSelector: action.isCSSSelector,
                                     actionMode: action.actionMode

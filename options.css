@@ -8923,3 +8923,82 @@ body:has(.landing) {
 .privacy-article ol {
     padding-left: 1.35rem !important;
 }
+
+/* Softer review modal and compact actions. */
+.review-reminder-modal {
+    background: rgba(2, 6, 23, 0.72) !important;
+    backdrop-filter: blur(8px) !important;
+}
+
+.review-reminder-dialog {
+    width: min(520px, calc(100vw - 42px)) !important;
+    min-height: 0 !important;
+    gap: 16px !important;
+    padding: 22px !important;
+    border-radius: 16px !important;
+    background:
+        linear-gradient(145deg, rgba(15, 35, 64, 0.98), rgba(15, 23, 42, 0.98)),
+        #0f172a !important;
+    border: 1px solid rgba(96, 165, 250, 0.45) !important;
+    box-shadow: 0 26px 80px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(15, 23, 42, 0.65) inset !important;
+}
+
+.review-reminder-dialog strong {
+    font-size: 1.15rem !important;
+    line-height: 1.25 !important;
+}
+
+.review-reminder-dialog span {
+    font-size: 0.92rem !important;
+    line-height: 1.55 !important;
+}
+
+.review-reminder-actions {
+    justify-content: flex-end !important;
+    gap: 10px !important;
+}
+
+.review-reminder-actions a,
+.review-reminder-actions button {
+    min-width: 92px !important;
+    min-height: 34px !important;
+    padding: 8px 13px !important;
+    border-radius: 10px !important;
+    font-size: 0.9rem !important;
+}
+
+/* Dock Feedback at the lower part of the right settings column. */
+#settingsPopup .config-settings-body[data-settings-panel="click-fill"] {
+    min-height: calc(100vh - 150px);
+    display: flex;
+    flex-direction: column;
+}
+
+#settingsPopup .feedback-dock {
+    margin-top: auto;
+    padding-top: 18px;
+}
+
+.config-session-list {
+    min-height: 0;
+    display: flex !important;
+    flex-direction: column;
+}
+
+.config-sidebar-version {
+    margin-top: auto;
+    padding: 14px 10px 2px;
+    color: rgba(191, 219, 254, 0.72);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.typing-speed-group {
+    max-width: 220px;
+    margin-left: auto;
+}
+
+#actionConfigModal .typing-speed-group[hidden] {
+    display: none !important;
+}

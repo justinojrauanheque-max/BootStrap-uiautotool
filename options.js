@@ -2388,6 +2388,7 @@ function adicionarXPathInput(
         if (repeatInput) repeatInput.value = repeticoes;
         actionRowDiv.setAttribute('data-fill-value', fillValue);
         actionRowDiv.setAttribute('data-fill-method', fillMethod);
+        actionRowDiv.setAttribute('data-typing-speed-ms', options.typingSpeedMs || options.typeDelayMs || '80');
         actionRowDiv.setAttribute('data-action-init-wait', waitInitModal);
         actionRowDiv.setAttribute('data-is-css-selector', isCSSSelector);
         actionRowDiv.setAttribute('data-action-mode', actionMode);
@@ -2615,6 +2616,7 @@ function areConfigsEquivalent(scriptConfig, uiConfig) {
                     repeat: repeat,
                     fillValue: action.value || '',
                     fillMethod: action.mode === 'fill' ? (action.fillMethod || 'paste') : 'paste',
+                    typingSpeedMs: action.typingSpeedMs || action.typeDelayMs || '80',
                     actionInitWait: String(action.waitBefore / 1000 || 0),
                     disabled: action.disabled || false,
                     isCSSSelector: action.isCSS || false,
@@ -2852,6 +2854,7 @@ window.addEventListener("resize", resizeEditor);
                                 repeat: action.repeat,
                                 fillValue: action.fillValue,
                                 fillMethod: action.fillMethod,
+                                typingSpeedMs: action.typingSpeedMs || action.typeDelayMs || '80',
                                 actionInitWait: action.actionInitWait,
                                 disabled: action.disabled,
                                 isCSSSelector: action.isCSSSelector,
@@ -4939,6 +4942,7 @@ function generateDynamicUserScript(config, useCachedScript = false) {
                                 repeat: action.repeat,
                                 fillValue: action.fillValue,
                                 fillMethod: action.fillMethod,
+                                typingSpeedMs: action.typingSpeedMs || action.typeDelayMs || '80',
                                 actionInitWait: action.actionInitWait,
                                 disabled: action.disabled,
                                 isCSSSelector: action.isCSSSelector,
@@ -5114,6 +5118,7 @@ function generateScriptContent(config, resolve) {
             mode: action.mode || 'click',
             value: action.fillValue || '',
             fillMethod: action.fillMethod || 'paste',
+            typingSpeedMs: action.typingSpeedMs || action.typeDelayMs || '80',
             interval: action.actionMode === 'mutationObserve' ? null : (action.intervalMs || 1000),
             repeat: action.actionMode === 'mutationObserve' ? null : (action.repeat === -2 ? null : action.repeat || 1),
             waitBefore: parseFloat(action.actionInitWait || 0) * 1000,
@@ -5315,7 +5320,8 @@ function aplicarDadosConfiguracao(config) {
                     persist: false,
                     disabled: !!action.disabled,
                     loadStoredName: true,
-                    actionId: action.actionId || action.id
+                    actionId: action.actionId || action.id,
+                    typingSpeedMs: action.typingSpeedMs || action.typeDelayMs || '80'
                 }
             );
         });
@@ -6411,6 +6417,9 @@ function loadConfigurationsFromStorage() {
                                 interval: action.intervalMs,
                                 repetitions: action.repeat,
                                 fillValue: action.fillValue,
+                                fillMethod: action.fillMethod || 'paste',
+                                typeDelayMs: action.typingSpeedMs || action.typeDelayMs || '80',
+                                typingSpeedMs: action.typingSpeedMs || action.typeDelayMs || '80',
                                 waitInitModal: action.actionInitWait,
                                 isCSSSelector: action.isCSSSelector || false,
                                 actionMode: action.actionMode || 'default'
@@ -6556,6 +6565,8 @@ chrome.storage.onChanged.addListener((changes, area) => {
             const valueInput = document.getElementById('modalValueInput');
             const fillMethodRadios = document.querySelectorAll('input[name="fillMethod"]');
             const modalActionInitialWaitInput = document.getElementById('modalActionInitialWait');
+            const modalTypingSpeedInput = document.getElementById('modalTypingSpeed');
+            const typingSpeedGroup = document.getElementById('typingSpeedGroup');
             const defaultModeRadio = document.getElementById('defaultMode');
             const mutationObserveModeRadio = document.getElementById('mutationObserveMode');
             const intervalCol = actionRowElement.querySelector('.col-interval-ms');
@@ -6578,6 +6589,9 @@ chrome.storage.onChanged.addListener((changes, area) => {
 
             const fillMethod = actionRowElement.getAttribute('data-fill-method') || 'paste';
             document.getElementById(fillMethod + 'Option').checked = true;
+            if (modalTypingSpeedInput) {
+                modalTypingSpeedInput.value = actionRowElement.getAttribute('data-typing-speed-ms') || '80';
+            }
 
             const actionMode = actionRowElement.getAttribute('data-action-mode') || 'default';
             actionConfigModal.dataset.selectedActionMode = actionMode;
@@ -6590,12 +6604,17 @@ chrome.storage.onChanged.addListener((changes, area) => {
                 const isMutationObserve = mutationObserveModeRadio.checked && !mutationObserveModeRadio.disabled;
                 if (intervalCol) intervalCol.style.display = isMutationObserve ? 'none' : '';
                 if (repeatCol) repeatCol.style.display = isMutationObserve ? 'none' : '';
+                const currentFillMethod = document.querySelector('input[name="fillMethod"]:checked')?.value || 'paste';
+                if (typingSpeedGroup) {
+                    typingSpeedGroup.hidden = !(modeSelect && modeSelect.value === 'fill' && currentFillMethod === 'type');
+                }
                 updateIntervalRepeatHeadersVisibility();
             };
             updateInputsState();
 
             defaultModeRadio.addEventListener('change', updateInputsState);
             mutationObserveModeRadio.addEventListener('change', updateInputsState);
+            fillMethodRadios.forEach(radio => radio.addEventListener('change', updateInputsState));
 
             actionConfigModal.style.display = 'block';
             console.log("Configuration modal opened for editing.");
@@ -6784,6 +6803,7 @@ chrome.storage.onChanged.addListener((changes, area) => {
                         const repeat = actionRow.querySelector('.col-repeat input').value;
                         const fillValue = actionRow.getAttribute('data-fill-value') || '';
                         const fillMethod = actionRow.getAttribute('data-fill-method') || 'paste';
+                        const typingSpeedMs = actionRow.getAttribute('data-typing-speed-ms') || '80';
                         const actionInitWait = actionRow.getAttribute('data-action-init-wait') || '0';
                         const isDisabled = actionRow.classList.contains('disabled');
                         const isCSSSelector = actionRow.getAttribute('data-is-css-selector') === 'true';
@@ -6801,7 +6821,7 @@ chrome.storage.onChanged.addListener((changes, area) => {
                             isCSSSelector,
                             actionMode,
                             name,
-                            { disabled: isDisabled }
+                            { disabled: isDisabled, typingSpeedMs }
                         );
 
                         updateActionNumbers();
@@ -7074,6 +7094,7 @@ function saveCurrentConfiguration(showMessage = true) {
                 repeat: row.getAttribute('data-action-mode') === 'mutationObserve' ? null : reps,
                 fillValue: row.getAttribute('data-fill-value') || '',
                 fillMethod: row.getAttribute('data-fill-method') || 'paste',
+                typingSpeedMs: row.getAttribute('data-typing-speed-ms') || '80',
                 actionInitWait: row.getAttribute('data-action-init-wait') || '0',
                 disabled: row.classList.contains('disabled'),
                 isCSSSelector: row.getAttribute('data-is-css-selector') === 'true',
@@ -7137,6 +7158,9 @@ function saveCurrentConfiguration(showMessage = true) {
                                 interval: action.intervalMs,
                                 repetitions: action.repeat,
                                 fillValue: action.fillValue,
+                                fillMethod: action.fillMethod || 'paste',
+                                typeDelayMs: action.typingSpeedMs || action.typeDelayMs || '80',
+                                typingSpeedMs: action.typingSpeedMs || action.typeDelayMs || '80',
                                 waitInitModal: action.actionInitWait,
                                 isCSSSelector: action.isCSSSelector,
                                 actionMode: action.actionMode
@@ -7332,7 +7356,10 @@ function deleteConfiguration(idToDelete, options = {}) {
                     parseFloat(msg.newAction.actionInitWait) || 0,
                     msg.newAction.mode || "click",
                     msg.newAction.fillMethod || "paste",
-                    isCSSSelector
+                    isCSSSelector,
+                    msg.newAction.actionMode || "default",
+                    msg.newAction.name || "",
+                    { typingSpeedMs: msg.newAction.typingSpeedMs || msg.newAction.typeDelayMs || '80' }
                 );
                 updateActionNumbers();
                 hasUnsavedChanges = false;
@@ -7505,6 +7532,7 @@ chrome.storage.onChanged.addListener((changes, area) => {
                             repeat: action.repeat ?? 1,
                             fillValue: action.fillValue || '',
                             fillMethod: action.fillMethod || 'paste',
+                            typingSpeedMs: action.typingSpeedMs || action.typeDelayMs || '80',
                             actionInitWait: action.actionInitWait || '0',
                             disabled: Boolean(action.disabled),
                             isCSSSelector: Boolean(action.isCSSSelector),
@@ -7581,6 +7609,7 @@ chrome.storage.onChanged.addListener((changes, area) => {
                                             repeat: action.repeat ?? 1,
                                             fillValue: action.fillValue || '',
                                             fillMethod: action.fillMethod || 'paste',
+                                            typingSpeedMs: action.typingSpeedMs || action.typeDelayMs || '80',
                                             actionInitWait: action.actionInitWait || '0',
                                             disabled: Boolean(action.disabled),
                                             isCSSSelector: Boolean(action.isCSSSelector),
@@ -7679,6 +7708,7 @@ chrome.storage.onChanged.addListener((changes, area) => {
             if (targetEditingActionRow) {
                 const modalValue = document.getElementById('modalValueInput').value;
                 const modalActionInitialWait = document.getElementById('modalActionInitialWait').value;
+                const modalTypingSpeed = document.getElementById('modalTypingSpeed')?.value || '80';
                 const actionModeRadio = document.querySelector('input[name="actionMode"]:checked');
                 const selectedActionMode = actionConfigModal ? actionConfigModal.dataset.selectedActionMode : '';
                 const actionMode = selectedActionMode || (actionModeRadio ? actionModeRadio.value : 'default');
@@ -7695,6 +7725,7 @@ chrome.storage.onChanged.addListener((changes, area) => {
 
                 targetEditingActionRow.setAttribute('data-fill-value', modalValue);
                 targetEditingActionRow.setAttribute('data-fill-method', fillMethod);
+                targetEditingActionRow.setAttribute('data-typing-speed-ms', modalTypingSpeed);
                 targetEditingActionRow.setAttribute('data-action-init-wait', modalActionInitialWait);
                 targetEditingActionRow.setAttribute('data-action-mode', actionMode);
 

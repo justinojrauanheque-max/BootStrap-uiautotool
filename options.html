@@ -71,7 +71,7 @@
             document.documentElement.dataset.optionsSession = session;
         })();
     </script>
-    <link rel="stylesheet" href="options.css?v=ui-polish-20260519-6">
+    <link rel="stylesheet" href="options.css?v=ui-polish-20260519-7">
     <style>
         @media (min-width: 1024px) {
             #baixar {
@@ -327,6 +327,7 @@
                             <div class="session-config-items" data-session-config-items="userscript"></div>
                         </div>
                     </div>
+                    <div class="config-sidebar-version">Ui Auto Tool v2.0.0</div>
                 </div>
                 <div class="config-state-list" hidden>
                     <div class="config-list-desktop"></div>
@@ -572,10 +573,11 @@ youtube.com
                                     </button>
                                 </div>
                             </div>
-<h4 class="title-with-icon">
-    Feedback
-    <span class="info-icon" title="When you enable FloatBox mode, a floating box appears in the bottom-right corner of the page showing actions in real time.">i</span>
-</h4>
+<div class="feedback-dock">
+    <h4 class="title-with-icon">
+        Feedback
+        <span class="info-icon" title="When you enable FloatBox mode, a floating box appears in the bottom-right corner of the page showing actions in real time.">i</span>
+    </h4>
 
                <div class="feedback-options">
                             <input type="radio" id="feedbackNone" name="feedbackMode" value="none" checked>
@@ -583,6 +585,7 @@ youtube.com
                             <input type="radio" id="feedbackFloatbox" name="feedbackMode" value="floatbox">
                             <label for="feedbackFloatbox">FloatBox</label>
                         </div>
+</div>
                         </div>
                         <div class="config-settings-body popup-body userscript-settings-body" data-settings-panel="userscript" hidden>
                             <section class="userscript-settings-section">
@@ -803,6 +806,10 @@ youtube.com
                             </div>
                         </div>
                     </div>
+                    <div class="input-group-modal typing-speed-group" id="typingSpeedGroup" hidden>
+                        <label for="modalTypingSpeed" id="editActionTypingSpeedLabel">Typing speed (ms)</label>
+                        <input type="number" id="modalTypingSpeed" value="80" min="0" step="5">
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-primary btn-save-modal" id="editActionSaveButton">Save</button>
@@ -981,9 +988,9 @@ youtube.com
             })();
         </script>
 
-        <script src="acfh-i18n.js?v=ui-polish-20260519-6"></script>
+        <script src="acfh-i18n.js?v=ui-polish-20260519-7"></script>
         <script src="navbar.js"></script>
-        <script src="options.js?v=ui-polish-20260519-6"></script>
+        <script src="options.js?v=ui-polish-20260519-7"></script>
         <script src="settings-processing.js?v=realtime-settings-2"></script>
     </section>
 </body>
