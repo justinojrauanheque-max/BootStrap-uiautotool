@@ -8863,3 +8863,63 @@ body:has(.landing) {
     line-height: 28px !important;
     font-size: 13px !important;
 }
+
+/* Final index polish: Supabase logo, slimmer article scrollbar, and readable privacy text. */
+.site-logo-square {
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+}
+
+.site-logo-img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    display: block;
+}
+
+.docs-content,
+.test-content,
+.privacy-content {
+    overflow-y: auto !important;
+    padding-right: clamp(20px, 2.8vw, 46px) !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: rgba(125, 161, 211, 0.55) transparent !important;
+}
+
+.docs-content::-webkit-scrollbar,
+.test-content::-webkit-scrollbar,
+.privacy-content::-webkit-scrollbar {
+    width: 5px !important;
+}
+
+.docs-content::-webkit-scrollbar-track,
+.test-content::-webkit-scrollbar-track,
+.privacy-content::-webkit-scrollbar-track {
+    background: transparent !important;
+}
+
+.docs-content::-webkit-scrollbar-thumb,
+.test-content::-webkit-scrollbar-thumb,
+.privacy-content::-webkit-scrollbar-thumb {
+    background: rgba(125, 161, 211, 0.62) !important;
+    border-radius: 999px !important;
+}
+
+.privacy-article {
+    max-width: 980px !important;
+}
+
+.privacy-article p,
+.privacy-article li {
+    text-align: justify !important;
+    text-justify: inter-word;
+    line-height: 1.75 !important;
+    hyphens: auto;
+}
+
+.privacy-article ol {
+    padding-left: 1.35rem !important;
+}

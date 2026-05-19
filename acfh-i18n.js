@@ -69,6 +69,102 @@
         'FloatBox feedback': { pt: 'Feedback FloatBox', es: 'Feedback FloatBox', fr: 'Retour FloatBox' },
         'Export & import': { pt: 'Exportar e importar', es: 'Exportar e importar', fr: 'Exporter et importer' },
         'Troubleshooting': { pt: 'Solucao de problemas', es: 'Solucion de problemas', fr: 'Depannage' },
+        'On this page': { pt: 'Nesta pagina', es: 'En esta pagina', fr: 'Sur cette page', de: 'Auf dieser Seite', it: 'In questa pagina', nl: 'Op deze pagina', pl: 'Na tej stronie', ru: 'Na etoy stranitse', zh: 'Ben ye', ja: 'Kono peiji', ko: 'I peiji', ar: 'Fi hadhihi alsafha', hi: 'Is page par' },
+        'Quick start': { pt: 'Inicio rapido', es: 'Inicio rapido', fr: 'Demarrage rapide', de: 'Schnellstart', it: 'Avvio rapido', nl: 'Snel starten', pl: 'Szybki start', ru: 'Bystryy start', zh: 'Kuaisu kaishi', ja: 'Kaisoku kaishi', ko: 'Ppareun sijak', ar: 'Bidaya sariha', hi: 'Quick start' },
+        'Workflow guide': { pt: 'Guia de fluxo', es: 'Guia de flujo', fr: 'Guide de flux' },
+        'Auto Clicker - Form Helper keeps three independent automation surfaces in one workspace: Click and Fill for table-driven actions, UserScript for custom JavaScript, and OCR for visual targets that are easier to recognize on screen.': {
+            pt: 'O Auto Clicker - Form Helper mantem tres superficies independentes de automacao no mesmo espaco: Clique e preencha para acoes em tabela, UserScript para JavaScript personalizado e OCR para alvos visuais mais faceis de reconhecer na tela.',
+            es: 'Auto Clicker - Form Helper mantiene tres superficies independientes de automatizacion en un mismo espacio: Click and Fill para acciones en tabla, UserScript para JavaScript personalizado y OCR para objetivos visuales faciles de reconocer en pantalla.',
+            fr: 'Auto Clicker - Form Helper garde trois zones d automatisation independantes dans un meme espace : Click and Fill pour les actions en tableau, UserScript pour le JavaScript personnalise et OCR pour les cibles visuelles.'
+        },
+        'Options workspace with sessions, actions, and site settings.': { pt: 'Area de opcoes com sessoes, acoes e configuracoes do site.', es: 'Area de opciones con sesiones, acciones y ajustes del sitio.', fr: 'Espace Options avec sessions, actions et reglages du site.' },
+        '1. Choose a session': { pt: '1. Escolha uma sessao', es: '1. Elige una sesion', fr: '1. Choisissez une session' },
+        'Pick the automation surface that fits the job.': { pt: 'Escolha a superficie de automacao que combina com a tarefa.', es: 'Elige la superficie de automatizacion adecuada.', fr: 'Choisissez la zone d automatisation adaptee.' },
+        '2. Save the target': { pt: '2. Salve o alvo', es: '2. Guarda el objetivo', fr: '2. Enregistrez la cible' },
+        'Set a URL, script metadata, or OCR capture.': { pt: 'Defina uma URL, metadados do script ou uma captura OCR.', es: 'Define una URL, metadatos del script o una captura OCR.', fr: 'Definissez une URL, des metadonnees de script ou une capture OCR.' },
+        '3. Enable execution': { pt: '3. Ative a execucao', es: '3. Activa la ejecucion', fr: '3. Activez l execution' },
+        'Run only after the rule is tested on the target page.': { pt: 'Execute apenas depois de testar a regra na pagina alvo.', es: 'Ejecuta solo despues de probar la regla en la pagina objetivo.', fr: 'Executez seulement apres avoir teste la regle sur la page cible.' },
+        'Auto Clicker - Form Helper automates clicks and form filling on websites and iframes. Create one configuration per site, define actions, and let the extension run the flow automatically.': {
+            pt: 'O Auto Clicker - Form Helper automatiza cliques e preenchimento de formularios em sites e iframes. Crie uma configuracao por site, defina as acoes e deixe a extensao executar o fluxo automaticamente.',
+            es: 'Auto Clicker - Form Helper automatiza clics y formularios en sitios e iframes. Crea una configuracion por sitio, define acciones y deja que la extension ejecute el flujo.',
+            fr: 'Auto Clicker - Form Helper automatise les clics et les formulaires sur sites et iframes. Creez une configuration par site, definissez les actions et laissez l extension executer le flux.'
+        },
+        'Create a configuration for the target URL.': { pt: 'Crie uma configuracao para a URL alvo.', es: 'Crea una configuracion para la URL objetivo.', fr: 'Creez une configuration pour l URL cible.' },
+        'Add actions (click or fill) with interval and repeat.': { pt: 'Adicione acoes (clique ou preencher) com intervalo e repeticao.', es: 'Anade acciones (clic o rellenar) con intervalo y repeticion.', fr: 'Ajoutez des actions (clic ou remplissage) avec intervalle et repetition.' },
+        'Enable the configuration and follow along with FloatBox.': { pt: 'Ative a configuracao e acompanhe pela FloatBox.', es: 'Activa la configuracion y acompanala con FloatBox.', fr: 'Activez la configuration et suivez avec FloatBox.' },
+        'Install from the Chrome Web Store:': { pt: 'Instale pela Chrome Web Store:', es: 'Instala desde Chrome Web Store:', fr: 'Installez depuis le Chrome Web Store :' },
+        'Then pin the extension icon for quick access.': { pt: 'Depois fixe o icone da extensao para acesso rapido.', es: 'Despues fija el icono de la extension para acceso rapido.', fr: 'Epinglez ensuite l icone de l extension pour un acces rapide.' },
+        'Each configuration represents a site or flow. Set a name, the URL, and an initial delay if the page needs time to load. The manual Add action button requires the configuration name and URL first, while right-click capture can still create rows from the target page.': {
+            pt: 'Cada configuracao representa um site ou fluxo. Defina um nome, a URL e um atraso inicial se a pagina precisar de tempo para carregar. O botao manual de adicionar acao exige primeiro nome e URL, enquanto a captura com clique direito ainda pode criar linhas a partir da pagina alvo.',
+            es: 'Cada configuracion representa un sitio o flujo. Define nombre, URL y retraso inicial si la pagina necesita tiempo para cargar.',
+            fr: 'Chaque configuration represente un site ou un flux. Definissez le nom, l URL et le delai initial si la page doit charger.'
+        },
+        'Use one configuration per page flow so timing, selectors, and repeats stay predictable.': { pt: 'Use uma configuracao por fluxo para manter tempo, seletores e repeticoes previsiveis.', es: 'Usa una configuracion por flujo para mantener tiempos y selectores previsibles.', fr: 'Utilisez une configuration par flux pour garder les delais et selecteurs previsibles.' },
+        'Use the most stable target available. Prefer IDs, data attributes, labels, and compact CSS selectors when the site provides them; use OCR when the visual target is stable but the DOM selector changes.': {
+            pt: 'Use o alvo mais estavel disponivel. Prefira IDs, atributos data, rotulos e seletores CSS curtos quando o site fornecer; use OCR quando o alvo visual e estavel, mas o seletor do DOM muda.',
+            es: 'Usa el objetivo mas estable disponible. Prefiere IDs, atributos data, etiquetas y selectores CSS compactos.',
+            fr: 'Utilisez la cible la plus stable disponible. Preferez les IDs, attributs data, libelles et selecteurs CSS compacts.'
+        },
+        'The extension supports click and fill actions in Click and Fill, plus visual actions in OCR. Each action owns its own configuration so changing one row does not change the others.': {
+            pt: 'A extensao suporta acoes de clique e preenchimento em Clique e preencha, alem de acoes visuais no OCR. Cada acao tem sua propria configuracao, entao alterar uma linha nao altera as outras.',
+            es: 'La extension admite clic y rellenar en Click and Fill, ademas de acciones visuales en OCR.',
+            fr: 'L extension prend en charge clic et remplissage dans Click and Fill, ainsi que les actions visuelles en OCR.'
+        },
+        'Control how many times each action runs and the time between runs.': { pt: 'Controle quantas vezes cada acao roda e o tempo entre execucoes.', es: 'Controla cuantas veces se ejecuta cada accion y el tiempo entre ejecuciones.', fr: 'Controlez le nombre d executions et le delai entre elles.' },
+        "The extension works on dynamic pages and iframes. When the element isn't in the DOM immediately, use:": {
+            pt: 'A extensao funciona em paginas dinamicas e iframes. Quando o elemento nao aparece imediatamente no DOM, use:',
+            es: 'La extension funciona en paginas dinamicas e iframes. Cuando el elemento no aparece de inmediato, usa:',
+            fr: 'L extension fonctionne sur pages dynamiques et iframes. Si l element n est pas immediatement dans le DOM, utilisez :'
+        },
+        'Enable advanced mode to unlock extra options, including Mutation Observe and sandbox controls. These controls apply to Click and Fill and to the UserScript editor settings panel, while OCR keeps its capture settings inside the OCR section.': {
+            pt: 'Ative o modo avancado para liberar opcoes extras, incluindo Mutation Observe e controles de sandbox. Esses controles se aplicam ao Clique e preencha e ao painel do editor UserScript, enquanto o OCR mantem suas configuracoes dentro da propria secao OCR.',
+            es: 'Activa el modo avanzado para liberar opciones extra, como Mutation Observe y controles sandbox.',
+            fr: 'Activez le mode avance pour debloquer des options comme Mutation Observe et les controles sandbox.'
+        },
+        'Use the UserScript editor for advanced automations and routines that are easier to express in JavaScript. UserScript is independent from Click and Fill and OCR: when this session is active, the active script can run; when another session is active, script registration is turned off.': {
+            pt: 'Use o editor UserScript para automacoes avancadas e rotinas que sao mais faceis de escrever em JavaScript. O UserScript e independente de Clique e preencha e OCR: quando essa sessao esta ativa, o script ativo pode rodar; quando outra sessao esta ativa, o registro do script e desligado.',
+            es: 'Usa el editor UserScript para automatizaciones avanzadas escritas en JavaScript.',
+            fr: 'Utilisez l editeur UserScript pour les automatisations avancees en JavaScript.'
+        },
+        'OCR mode is independent from Click and Fill and UserScript. It is designed for visual targets: buttons, labels, checkboxes, switches, scroll areas, and text that can be identified from a small capture area.': {
+            pt: 'O modo OCR e independente de Clique e preencha e UserScript. Ele foi feito para alvos visuais: botoes, rotulos, checkboxes, switches, areas de rolagem e textos identificaveis em uma pequena area capturada.',
+            es: 'El modo OCR es independiente de Click and Fill y UserScript. Sirve para objetivos visuales.',
+            fr: 'Le mode OCR est independant de Click and Fill et UserScript. Il sert aux cibles visuelles.'
+        },
+        'Define blocked sites to prevent accidental automation. Each blocked domain disables execution.': { pt: 'Defina sites bloqueados para evitar automacoes acidentais. Cada dominio bloqueado desativa a execucao.', es: 'Define sitios bloqueados para evitar automatizaciones accidentales.', fr: 'Definissez des sites bloques pour eviter les automatisations accidentelles.' },
+        'FloatBox shows the action status in the corner of the page, including counters, element waiting, and completion.': { pt: 'A FloatBox mostra o estado das acoes no canto da pagina, incluindo contadores, espera por elementos e conclusao.', es: 'FloatBox muestra el estado de las acciones en la esquina de la pagina.', fr: 'FloatBox affiche l etat des actions dans un coin de la page.' },
+        'Save your configurations as JSON for backup or migration.': { pt: 'Salve suas configuracoes em JSON para backup ou migracao.', es: 'Guarda tus configuraciones como JSON para respaldo o migracion.', fr: 'Enregistrez vos configurations en JSON pour sauvegarde ou migration.' },
+        'Use this quick checklist:': { pt: 'Use esta lista rapida:', es: 'Usa esta lista rapida:', fr: 'Utilisez cette liste rapide :' },
+        'Validation page': { pt: 'Pagina de validacao', es: 'Pagina de validacion', fr: 'Page de validation' },
+        'Local-first policy': { pt: 'Politica local primeiro', es: 'Politica local primero', fr: 'Politique locale d abord' },
+        'Privacy and permissions': { pt: 'Privacidade e permissoes', es: 'Privacidad y permisos', fr: 'Confidentialite et permissions' },
+        'The extension stores configurations locally in the browser and uses permissions only to run the automation features selected by the user.': {
+            pt: 'A extensao guarda as configuracoes localmente no navegador e usa permissoes apenas para executar as funcoes de automacao escolhidas pelo usuario.',
+            es: 'La extension guarda las configuraciones localmente en el navegador y usa permisos solo para ejecutar las funciones elegidas por el usuario.',
+            fr: 'L extension stocke les configurations localement dans le navigateur et utilise les permissions uniquement pour les fonctions choisies.'
+        },
+        'Privacy policy': { pt: 'Politica de privacidade', es: 'Politica de privacidad', fr: 'Politique de confidentialite' },
+        'Policy': { pt: 'Politica', es: 'Politica', fr: 'Politique' },
+        'Data collection and use:': { pt: 'Coleta e uso de dados:', es: 'Recopilacion y uso de datos:', fr: 'Collecte et utilisation des donnees:' },
+        "This extension is designed with your privacy in mind. It does not collect, store, monitor, transmit, or share any personally identifiable data or browsing information with the developer or third parties. All user-provided settings (such as XPaths, fill values, intervals, and repeat options) are stored exclusively in your browser's local storage (via chrome.storage.local). This information is never sent to external servers or accessed by any other entity.": {
+            pt: 'Esta extensao foi pensada com foco na sua privacidade. Ela nao coleta, armazena, monitora, transmite nem compartilha dados pessoais ou informacoes de navegacao com o desenvolvedor ou terceiros. Todas as configuracoes fornecidas pelo usuario, como XPaths, valores de preenchimento, intervalos e repeticoes, ficam somente no armazenamento local do navegador via chrome.storage.local. Essas informacoes nunca sao enviadas para servidores externos nem acessadas por outra entidade.',
+            es: 'Esta extension fue disenada pensando en tu privacidad. No recopila, almacena, monitorea, transmite ni comparte datos personales o informacion de navegacion con el desarrollador o terceros. Todas las configuraciones del usuario se guardan solo en el almacenamiento local del navegador mediante chrome.storage.local.',
+            fr: 'Cette extension est concue pour respecter votre vie privee. Elle ne collecte, stocke, surveille, transmet ni partage aucune donnee personnelle ou information de navigation avec le developpeur ou des tiers. Tous les reglages utilisateur restent uniquement dans le stockage local du navigateur via chrome.storage.local.'
+        },
+        'Extension permissions:': { pt: 'Permissoes da extensao:', es: 'Permisos de la extension:', fr: 'Permissions de l extension:' },
+        "The permissions requested by the extension (storage, scripting, activeTab, tabs, webNavigation, contextMenus) are strictly necessary for its core purpose: automating clicks and form filling on web pages. None of these permissions are used to collect data unrelated to the extension's functionality.": {
+            pt: 'As permissoes solicitadas pela extensao (storage, scripting, activeTab, tabs, webNavigation e contextMenus) sao estritamente necessarias para sua finalidade principal: automatizar cliques e preenchimento de formularios em paginas web. Nenhuma dessas permissoes e usada para coletar dados fora da funcionalidade da extensao.',
+            es: 'Los permisos solicitados por la extension son necesarios para automatizar clics y formularios en paginas web. No se usan para recopilar datos ajenos a la funcionalidad.',
+            fr: 'Les permissions demandees par l extension sont necessaires pour automatiser les clics et les formulaires. Elles ne servent pas a collecter des donnees sans lien avec la fonctionnalite.'
+        },
+        'Data security:': { pt: 'Seguranca dos dados:', es: 'Seguridad de datos:', fr: 'Securite des donnees:' },
+        'Since all user data is stored locally on your device, security depends on the protections of your browser and operating system. The extension does not implement network security mechanisms because no data is transmitted.': {
+            pt: 'Como todos os dados do usuario ficam guardados localmente no dispositivo, a seguranca depende das protecoes do navegador e do sistema operacional. A extensao nao implementa mecanismos de seguranca de rede porque nenhum dado e transmitido.',
+            es: 'Como todos los datos se guardan localmente, la seguridad depende del navegador y del sistema operativo. No se transmiten datos.',
+            fr: 'Comme toutes les donnees restent localement sur votre appareil, la securite depend du navigateur et du systeme. Aucune donnee n est transmise.'
+        },
+        'Changes to this privacy policy:': { pt: 'Alteracoes nesta politica:', es: 'Cambios en esta politica:', fr: 'Modifications de cette politique:' },
+        'We may update this privacy policy periodically. Any changes will be reflected on this page.': { pt: 'Podemos atualizar esta politica periodicamente. Qualquer alteracao sera refletida nesta pagina.', es: 'Podemos actualizar esta politica periodicamente. Los cambios apareceran en esta pagina.', fr: 'Nous pouvons mettre a jour cette politique periodiquement. Les changements apparaitront sur cette page.' },
         'Workflow guide': { pt: 'Guia de fluxo', es: 'Guia de flujo', fr: 'Guide de flux' },
         'Click and Fill': { pt: 'Clique e preencha', es: 'Clic y rellenar', fr: 'Cliquer et remplir' },
         'Click and fill': { pt: 'Clique e preencha', es: 'Clic y rellenar', fr: 'Cliquer et remplir' },
