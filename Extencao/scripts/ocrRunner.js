@@ -629,23 +629,20 @@
             .acfh-ocr-float-btn.play.active { background: #991b1b; }
             .acfh-ocr-float-btn.stop.active { background: #991b1b; }
             .acfh-ocr-float-btn.danger { background: #991b1b; }
-            .acfh-ocr-capture-wrap { position: relative; display: inline-flex; align-items: stretch; gap: 0; }
+            .acfh-ocr-capture-wrap { position: relative; display: inline-flex; align-items: stretch; gap: 2px; }
             .acfh-ocr-float-btn.capture-mode {
-                width: 26px;
-                min-width: 26px;
+                width: 22px;
+                min-width: 22px;
                 font-size: 18px;
                 font-weight: 800;
                 line-height: 1;
                 background: #0f766e;
-                border-radius: 6px 0 0 6px;
-                border-right: 1px solid rgba(255,255,255,.18);
-            }
-            .acfh-ocr-capture-wrap .acfh-ocr-float-btn.capture {
-                border-radius: 0 6px 6px 0;
+                border-radius: 6px;
+                padding: 0;
             }
             .acfh-ocr-capture-menu {
                 position: absolute;
-                right: 0;
+                left: 0;
                 bottom: calc(100% + 8px);
                 min-width: 170px;
                 padding: 6px;
@@ -654,6 +651,7 @@
                 background: #111827;
                 box-shadow: 0 18px 45px rgba(0,0,0,.42);
                 display: none;
+                z-index: 2147483647;
             }
             .acfh-ocr-capture-wrap.open .acfh-ocr-capture-menu { display: grid; gap: 3px; }
             .acfh-ocr-capture-option {
@@ -716,7 +714,9 @@
         const captureWrap = document.createElement('div');
         captureWrap.className = 'acfh-ocr-capture-wrap';
 
-        const captureModeButton = makeIconButton(txt('captureMode'), '&lt;', () => {
+        const captureModeButton = makeIconButton(txt('captureMode'), '&lt;', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
             captureWrap.classList.toggle('open');
         }, 'capture-mode');
 
@@ -729,7 +729,9 @@
                 item.type = 'button';
                 item.className = `acfh-ocr-capture-option${selectedCaptureAction === value ? ' active' : ''}`;
                 item.textContent = txt(labelKey);
-                item.addEventListener('click', () => {
+                item.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
                     selectedCaptureAction = value;
                     captureWrap.classList.remove('open');
                     setFloatStatus(txt(labelKey));
@@ -740,7 +742,10 @@
         };
         renderCaptureMenu();
 
-        const captureButton = makeIconButton('Capture', icons.capture, () => {
+        const captureButton = makeIconButton('Capture', icons.capture, (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            captureWrap.classList.remove('open');
             refreshEnabledThen(() => {
                 const defaults = firstRuleDefaults(selectedCaptureAction);
                 if (selectedCaptureAction === 'captureText') {
@@ -753,7 +758,7 @@
         captureWrap.append(captureModeButton, captureButton, captureMenu);
         document.addEventListener('click', (event) => {
             if (!captureWrap.contains(event.target)) captureWrap.classList.remove('open');
-        }, { capture: true });
+        });
 
         floatPlayButton = makeIconButton('Play', icons.play, () => refreshEnabledThen(() => toggleSequentialPlayback()), 'play');
         const nextButton = makeIconButton('Next', icons.next, () => refreshEnabledThen(() => runNextRule()));
