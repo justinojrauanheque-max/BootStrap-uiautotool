@@ -311,7 +311,7 @@ body:has(.landing) {
 
 #baixar .config-content,
 .config-content {
-    grid-template-columns: 340px minmax(0, 1fr) 430px !important;
+    grid-template-columns: 340px minmax(0, 1fr) 500px !important;
 }
 
 .config-sidebar {
@@ -322,7 +322,7 @@ body:has(.landing) {
 @media (min-width: 1500px) {
     #baixar .config-content,
     .config-content {
-        grid-template-columns: 350px minmax(0, 1fr) 450px !important;
+        grid-template-columns: 350px minmax(0, 1fr) 520px !important;
     }
 
     .config-sidebar {
@@ -8786,5 +8786,18 @@ body:has(.landing) {
     .config-sidebar {
         width: 350px !important;
         min-width: 350px !important;
+    }
+}
+
+/* Final right settings width override. */
+#baixar .config-content,
+.config-content {
+    grid-template-columns: 340px minmax(0, 1fr) 500px !important;
+}
+
+@media (min-width: 1500px) {
+    #baixar .config-content,
+    .config-content {
+        grid-template-columns: 350px minmax(0, 1fr) 520px !important;
     }
 }

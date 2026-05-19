@@ -629,14 +629,19 @@
             .acfh-ocr-float-btn.play.active { background: #991b1b; }
             .acfh-ocr-float-btn.stop.active { background: #991b1b; }
             .acfh-ocr-float-btn.danger { background: #991b1b; }
-            .acfh-ocr-capture-wrap { position: relative; display: inline-flex; align-items: stretch; gap: 2px; }
+            .acfh-ocr-capture-wrap { position: relative; display: inline-flex; align-items: stretch; gap: 0; }
             .acfh-ocr-float-btn.capture-mode {
-                width: 22px;
-                min-width: 22px;
+                width: 26px;
+                min-width: 26px;
                 font-size: 18px;
                 font-weight: 800;
                 line-height: 1;
-                background: #3f3f46;
+                background: #0f766e;
+                border-radius: 6px 0 0 6px;
+                border-right: 1px solid rgba(255,255,255,.18);
+            }
+            .acfh-ocr-capture-wrap .acfh-ocr-float-btn.capture {
+                border-radius: 0 6px 6px 0;
             }
             .acfh-ocr-capture-menu {
                 position: absolute;

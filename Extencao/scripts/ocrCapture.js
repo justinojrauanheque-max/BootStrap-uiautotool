@@ -268,7 +268,9 @@
             'background:rgba(15,23,42,.98)',
             'box-shadow:0 24px 70px rgba(0,0,0,.48)',
             'color:#e5e7eb',
-            'font-family:Segoe UI,Arial,sans-serif'
+            'font-family:Segoe UI,Arial,sans-serif',
+            'user-select:text',
+            'pointer-events:auto'
         ].join(';');
 
         const title = document.createElement('strong');
@@ -288,7 +290,9 @@
             'background:#020617',
             'color:#f8fafc',
             'padding:10px',
-            'font:13px/1.5 Consolas,monospace'
+            'font:13px/1.5 Consolas,monospace',
+            'user-select:text',
+            'cursor:text'
         ].join(';');
 
         const actions = document.createElement('div');
@@ -313,6 +317,13 @@
             } catch (e) {
                 document.execCommand('copy');
                 copy.textContent = 'Copied';
+            }
+        });
+        textarea.addEventListener('keydown', (event) => {
+            if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'a') {
+                event.preventDefault();
+                textarea.focus();
+                textarea.select();
             }
         });
         close.addEventListener('click', () => shell.remove());
