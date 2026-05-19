@@ -61,44 +61,65 @@ let currentContextMenuPatterns = []; // PadrÃµes de URL usados para limitar o 
 const injectedUserScriptDocuments = new Map();
 const pendingOcrCaptureDefaultsByTab = new Map();
 
-function updateActionBadge(isActive) {
+function setActionBadgeForTab(tabId, count = 0) {
     if (!chrome.action || !chrome.action.setBadgeText) return;
+    if (!tabId) return;
     try {
         chrome.action.setBadgeBackgroundColor({ color: '#dc2626' });
         if (chrome.action.setBadgeTextColor) {
             chrome.action.setBadgeTextColor({ color: '#ffffff' });
         }
-        chrome.action.setBadgeText({ text: isActive ? '•' : '' });
+        chrome.action.setBadgeText({
+            tabId,
+            text: count > 0 ? String(count) : ''
+        });
     } catch (e) {
         console.warn('Unable to update action badge:', e && e.message ? e.message : e);
     }
+}
+
+function clearActionBadgesForOpenTabs(callback) {
+    chrome.tabs.query({}, (tabs) => {
+        (Array.isArray(tabs) ? tabs : []).forEach((tab) => {
+            if (tab && tab.id) {
+                setActionBadgeForTab(tab.id, 0);
+            }
+        });
+        if (typeof callback === 'function') callback();
+    });
 }
 
 function refreshRuntimeBadge() {
     chrome.storage.local.get([
         'autoClickerEnabled',
         'activeAutomationMode',
-        'configurations',
-        'activeConfigId',
-        'ocrRules',
         INDEPENDENT_USERSCRIPT_KEY
     ], (data) => {
         if (chrome.runtime.lastError || !data.autoClickerEnabled) {
-            updateActionBadge(false);
+            clearActionBadgesForOpenTabs();
             return;
         }
         const mode = normalizeActiveAutomationMode(data.activeAutomationMode);
-        let active = false;
-        if (mode === ACTIVE_AUTOMATION_MODE_USERSCRIPT) {
-            active = !!data[INDEPENDENT_USERSCRIPT_KEY];
-        } else if (mode === ACTIVE_AUTOMATION_MODE_OCR) {
-            active = Array.isArray(data.ocrRules) && data.ocrRules.some(rule => rule && !rule.disabled);
-        } else {
-            const config = (Array.isArray(data.configurations) ? data.configurations : [])
-                .find(item => item && item.id === data.activeConfigId);
-            active = !!(config && Array.isArray(config.actions) && config.actions.some(action => action && !action.disabled && action.elementFinder));
+        const scriptContent = data[INDEPENDENT_USERSCRIPT_KEY];
+        if (mode !== ACTIVE_AUTOMATION_MODE_USERSCRIPT || !scriptContent) {
+            clearActionBadgesForOpenTabs();
+            return;
         }
-        updateActionBadge(active);
+        chrome.tabs.query({}, (tabs) => {
+            const injectedTabs = new Set();
+            for (const key of injectedUserScriptDocuments.keys()) {
+                const tabId = Number(String(key).split(':')[0]);
+                if (Number.isFinite(tabId)) {
+                    injectedTabs.add(tabId);
+                }
+            }
+            (Array.isArray(tabs) ? tabs : []).forEach((tab) => {
+                const shouldShow = tab && tab.id && injectedTabs.has(tab.id) &&
+                    isInjectablePageUrl(tab.url) &&
+                    urlMatchesUserScript(tab.url, scriptContent, 0);
+                setActionBadgeForTab(tab.id, shouldShow ? 1 : 0);
+            });
+        });
     });
 }
 
@@ -202,8 +223,7 @@ chrome.storage.onChanged.addListener((changes, area) => {
     // Mantemos o menu disponÃ­vel em qualquer site quando a extensÃ£o estÃ¡
     // ligada, para permitir criar/editar configuraÃ§Ãµes em qualquer URL.
     if ('autoClickerEnabled' in changes || 'activeAutomationMode' in changes ||
-        'configurations' in changes || 'activeConfigId' in changes ||
-        'ocrRules' in changes || 'independentUserScript' in changes) {
+        'independentUserScript' in changes || 'activeUserScriptId' in changes) {
         refreshRuntimeBadge();
     }
 
@@ -1026,6 +1046,7 @@ function injectIndependentUserScriptIntoTab(tabId, tabUrl, scriptContent, detail
         force: options.force === true
     }).then((success) => {
         if (success) {
+            setActionBadgeForTab(tabId, 1);
             console.log('Independent UserScript injected once:', tabUrl, injectionDetails);
         }
         return success;
@@ -1056,6 +1077,7 @@ function injectActiveUserScriptIntoOpenTabs(scriptContent, options = {}) {
 
 function deactivateUserScriptsInTab(tabId) {
     if (!tabId) return Promise.resolve(false);
+    setActionBadgeForTab(tabId, 0);
     return chrome.scripting.executeScript({
         target: { tabId, allFrames: true },
         world: 'MAIN',
@@ -1079,6 +1101,7 @@ function deactivateUserScriptsInTab(tabId) {
 
 function deactivateInjectedUserScriptsInOpenTabs(callback) {
     injectedUserScriptDocuments.clear();
+    clearActionBadgesForOpenTabs();
     chrome.tabs.query({}, (tabs) => {
         const targets = (Array.isArray(tabs) ? tabs : [])
             .filter(tab => tab && tab.id && isInjectablePageUrl(tab.url));
@@ -1104,6 +1127,11 @@ chrome.tabs.onRemoved.addListener((tabId) => {
             injectedUserScriptDocuments.delete(key);
         }
     }
+});
+
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (changeInfo.status !== 'loading' && !changeInfo.url) return;
+    setActionBadgeForTab(tabId, 0);
 });
 
 /*
@@ -2126,7 +2154,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             // apenas garantimos que nenhum novo menu de contexto fique
             // visível.
             createOrUpdateContextMenu(false);
-            updateActionBadge(false);
+            clearActionBadgesForOpenTabs();
             deactivateInjectedUserScriptsInOpenTabs(() => {
                 unregisterNativeIndependentUserScripts();
             });
