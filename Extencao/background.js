@@ -1773,10 +1773,20 @@ function runWhenOcrModeActive(sendResponse, callback) {
     });
 }
 
+function runWhenOcrModeSelected(sendResponse, callback) {
+    chrome.storage.local.get(['activeAutomationMode'], (data) => {
+        if (normalizeActiveAutomationMode(data.activeAutomationMode) !== ACTIVE_AUTOMATION_MODE_OCR) {
+            respondToRuntime(sendResponse, { success: false, error: 'OCR session is not active.' });
+            return;
+        }
+        callback();
+    });
+}
+
 // ManipulaÃ§Ã£o de mensagens
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === 'startOcrCapture') {
-        runWhenOcrModeActive(sendResponse, () => {
+        runWhenOcrModeSelected(sendResponse, () => {
             startOcrCapture(message.defaults || {}, message.targetUrl || '', sendResponse);
         });
         return true;

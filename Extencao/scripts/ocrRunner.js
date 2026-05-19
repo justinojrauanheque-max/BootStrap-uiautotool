@@ -746,13 +746,17 @@
             event.preventDefault();
             event.stopPropagation();
             captureWrap.classList.remove('open');
-            refreshEnabledThen(() => {
-                const defaults = firstRuleDefaults(selectedCaptureAction);
-                if (selectedCaptureAction === 'captureText') {
-                    defaults.textOnly = true;
-                    defaults.noCreateAction = true;
+            const defaults = firstRuleDefaults(selectedCaptureAction);
+            if (selectedCaptureAction === 'captureText') {
+                defaults.textOnly = true;
+                defaults.noCreateAction = true;
+            }
+            chrome.runtime.sendMessage({ action: 'startOcrCapture', targetUrl: settingsState.url, defaults }, (response) => {
+                if (chrome.runtime.lastError || !response || !response.success) {
+                    setFloatStatus((response && response.error) || (chrome.runtime.lastError && chrome.runtime.lastError.message) || txt('noTarget'));
+                    return;
                 }
-                chrome.runtime.sendMessage({ action: 'startOcrCapture', targetUrl: settingsState.url, defaults }, () => {});
+                setFloatStatus(txt(selectedCaptureAction === 'captureText' ? 'captureText' : 'ready'));
             });
         }, 'capture');
         captureWrap.append(captureModeButton, captureButton, captureMenu);

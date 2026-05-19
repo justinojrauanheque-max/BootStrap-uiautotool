@@ -1534,6 +1534,10 @@ function loadAllActionNamesForConfig() {
             clearTimeout(saveNotification._cleanupTimer);
             saveNotification._cleanupTimer = null;
         }
+        if (saveNotification._watchdogTimer) {
+            clearTimeout(saveNotification._watchdogTimer);
+            saveNotification._watchdogTimer = null;
+        }
         saveNotification.classList.remove('show', 'save-error', 'save-success', 'save-warning');
 
         const textElement = saveNotification.querySelector('.save-text');
@@ -1562,6 +1566,7 @@ function loadAllActionNamesForConfig() {
             progressBar.style.width = '100%';
         }
 
+        const safeDuration = Math.max(900, Number(duration) || 1500);
         saveTimeout = setTimeout(() => {
             saveNotification.classList.remove('show');
             saveNotification._cleanupTimer = setTimeout(() => {
@@ -1571,7 +1576,15 @@ function loadAllActionNamesForConfig() {
             if (progressBar) {
                 progressBar.style.width = '0';
             }
-        }, duration);
+        }, safeDuration);
+        saveNotification._watchdogTimer = setTimeout(() => {
+            saveNotification.classList.remove('show', 'save-error', 'save-success', 'save-warning');
+            saveNotification._cleanupTimer = null;
+            saveNotification._watchdogTimer = null;
+            if (progressBar) {
+                progressBar.style.width = '0';
+            }
+        }, safeDuration + 1300);
     }
 
     function maybeShowReviewReminder() {

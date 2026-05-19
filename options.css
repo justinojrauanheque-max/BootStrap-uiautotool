@@ -8824,3 +8824,29 @@ body:has(.landing) {
         min-width: 305px !important;
     }
 }
+
+/* Final docs vertical alignment and top feedback sizing. */
+.landing-section.docs-section,
+.landing-section.test-section,
+.landing-section.privacy-section {
+    padding-top: 20px !important;
+}
+
+.docs-content,
+.test-content,
+.privacy-content {
+    padding-top: 8px !important;
+}
+
+.save-notification,
+.acfh-top-feedback {
+    top: 58px !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    padding: 0 18px !important;
+    box-sizing: border-box;
+}
+
+.save-notification .save-text {
+    line-height: 44px;
+}
