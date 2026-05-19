@@ -8801,3 +8801,26 @@ body:has(.landing) {
         grid-template-columns: 350px minmax(0, 1fr) 520px !important;
     }
 }
+
+/* Final column balance: slimmer session menu, wider settings panel. */
+#baixar .config-content,
+.config-content {
+    grid-template-columns: 300px minmax(0, 1fr) 560px !important;
+}
+
+.config-sidebar {
+    width: 300px !important;
+    min-width: 300px !important;
+}
+
+@media (min-width: 1500px) {
+    #baixar .config-content,
+    .config-content {
+        grid-template-columns: 305px minmax(0, 1fr) 590px !important;
+    }
+
+    .config-sidebar {
+        width: 305px !important;
+        min-width: 305px !important;
+    }
+}
