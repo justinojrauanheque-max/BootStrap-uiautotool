@@ -1569,12 +1569,18 @@ function normalizeOcrDefaults(defaults = {}) {
         intervalMs: Number.isFinite(Number(defaults.intervalMs)) ? Math.max(10, Number(defaults.intervalMs)) : 1000,
         repeat: Number.isFinite(Number(defaults.repeat)) ? Number(defaults.repeat) : 1,
         targetUrl: defaults.targetUrl || '',
-        initWait: defaults.initWait || '0'
+        initWait: defaults.initWait || '0',
+        textOnly: defaults.textOnly === true,
+        noCreateAction: defaults.noCreateAction === true
     };
 }
 
 function appendOcrRuleFromCapture(capture, defaults = {}, sendResponse) {
     const normalizedDefaults = normalizeOcrDefaults(defaults);
+    if (normalizedDefaults.textOnly || normalizedDefaults.noCreateAction || normalizedDefaults.action === 'captureText') {
+        respondToRuntime(sendResponse, { success: true, textOnly: true });
+        return;
+    }
     chrome.storage.local.get(['ocrRules', OCR_SETTINGS_KEY], (data) => {
         const rules = Array.isArray(data.ocrRules) ? data.ocrRules : [];
         const settings = normalizeOcrSettings(data[OCR_SETTINGS_KEY] || {});
